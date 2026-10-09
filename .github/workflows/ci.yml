@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Android gate (build + unit tests + ktlint + lint)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+
+      # The app's Gradle build is a composite: `shared/` lives in this repo,
+      # but the Kotlin bridge SDK is included from the sibling core/ checkout
+      # (health-assistant-io/health-assistant, public). CI clones it next to
+      # the workspace so the default includeBuild path resolves unchanged.
+      - name: Clone the sibling core/ repo (bridge Kotlin SDK)
+        run: git clone --depth 1 https://github.com/health-assistant-io/health-assistant.git "$GITHUB_WORKSPACE/../core"
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - uses: android-actions/setup-android@v3
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: Full gate (compile + unit tests + ktlint + Android Lint)
+        run: ./gradlew build
+
+      - name: Composite-build suites (NOT wired into root `build`)
+        run: ./gradlew :shared:test :kotlin-sdk:test
+
+      - name: Upload test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            android/app/build/reports/tests/**
+            android/app/build/reports/ktlint/**
+            shared/build/reports/tests/**
+          if-no-files-found: ignore

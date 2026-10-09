@@ -1,0 +1,27 @@
+version: 2
+updates:
+  - package-ecosystem: gradle
+    directory: /android
+    schedule:
+      interval: weekly
+    groups:
+      androidx:
+        patterns:
+          - "androidx.*"
+          - "com.google.android.*"
+      kotlin:
+        patterns:
+          - "org.jetbrains.kotlin.*"
+          - "org.jetbrains.kotlinx.*"
+    ignore:
+      # Toolchain pins are deliberate (AGENTS.md): bump in a dedicated,
+      # fully re-gated change, not automatically.
+      - dependency-name: "com.android.application"
+      - dependency-name: "org.jetbrains.kotlin.android"
+      - dependency-name: "org.jetbrains.kotlin.multiplatform"
+      - dependency-name: "org.jetbrains.kotlin.plugin.compose"
+      - dependency-name: "com.google.devtools.ksp"
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

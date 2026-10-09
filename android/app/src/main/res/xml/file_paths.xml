@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- cache-path: where Phase A writes downloaded document bytes before
+         handing them to the system viewer via FileProvider.getUriForFile().
+         The root is Context.getCacheDir() — files are scoped to the app
+         and cleaned up by the OS when the device is low on storage. -->
+    <cache-path name="documents" path="documents/" />
+</paths>

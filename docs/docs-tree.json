@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "project": "health-assistant-app",
+  "title": "Health Assistant — Android App",
+  "description": "The offline-first Android companion app for a self-hosted Health Assistant instance: Health Connect sync, native biomarker charts, records, alerts, and widgets.",
+  "audiences": [
+    {
+      "id": "user",
+      "title": "User Guide",
+      "description": "How to install the app, connect your instance, and use every feature — online or offline.",
+      "categories": [
+        {
+          "id": "start",
+          "title": "Start here",
+          "icon": "Play",
+          "items": [
+            {
+              "id": "overview",
+              "file": "user/README.md",
+              "title": "User guide overview",
+              "description": "The guided tour and the full list of user guides."
+            },
+            {
+              "id": "getting-started",
+              "file": "user/getting-started.md",
+              "title": "Getting started",
+              "description": "Install the app, connect your instance with the bridge QR, grant Health Connect permissions, and watch your data flow."
+            },
+            {
+              "id": "features",
+              "file": "user/features.md",
+              "title": "Feature catalog",
+              "description": "Every screen and capability, as built — Home, Records, charts, overview, alerts, widgets, inbox, Simple/Advanced modes."
+            }
+          ]
+        },
+        {
+          "id": "data",
+          "title": "Your data",
+          "icon": "Database",
+          "items": [
+            {
+              "id": "offline-and-data",
+              "file": "user/offline-and-data.md",
+              "title": "Offline & your data",
+              "description": "What works offline, where data is stored (SQLCipher, per-connection), how to clear it, and the privacy model."
+            },
+            {
+              "id": "troubleshooting",
+              "file": "user/troubleshooting.md",
+              "title": "Troubleshooting",
+              "description": "Fixes for connection, sync, and crash problems users actually hit."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dev",
+      "title": "Developer Docs",
+      "description": "How the app is built, tested, verified on hardware, and released.",
+      "categories": [
+        {
+          "id": "build",
+          "title": "Build & understand",
+          "icon": "Wrench",
+          "items": [
+            {
+              "id": "dev-overview",
+              "file": "dev/README.md",
+              "title": "Developer docs overview",
+              "description": "The index of developer documentation."
+            },
+            {
+              "id": "architecture",
+              "file": "dev/architecture.md",
+              "title": "Architecture",
+              "description": "Module map, two-repo model, sync engine, offline cache, alerts/widgets subsystems, security model, testing layers."
+            },
+            {
+              "id": "development",
+              "file": "dev/development.md",
+              "title": "Development workflow",
+              "description": "Dev setup, the phased delivery model, testing policy, adding features, commit and release conventions."
+            },
+            {
+              "id": "ui-patterns",
+              "file": "dev/ui-patterns.md",
+              "title": "UI patterns",
+              "description": "The Compose UI architecture: design system, navigation, Screen/Route pattern, i18n, UI tests, Simple/Advanced mode."
+            }
+          ]
+        },
+        {
+          "id": "operate",
+          "title": "Devices & releases",
+          "icon": "Smartphone",
+          "items": [
+            {
+              "id": "dev-troubleshooting",
+              "file": "dev/troubleshooting.md",
+              "title": "Troubleshooting (dev)",
+              "description": "The working MIUI adb workflow, lint rules, Baseline Profile regeneration, R8 keep rules, and the MIUI-proof verification driver."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

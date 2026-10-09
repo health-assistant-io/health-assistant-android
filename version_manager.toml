@@ -1,0 +1,19 @@
+# Health Assistant Android app — version manager config (family-unified script)
+# Family-unified script — do not fork; keep in sync with the internal standards distribution
+
+[project]
+name = "Health Assistant Android"
+
+[version]
+file = "android/app/build.gradle.kts"
+pattern = 'versionName\s*=\s*"(?P<version>[^"]+)"'
+
+# Runbook notes (no automation):
+# - `versionCode` (the Android integer build number) is bumped by hand in the
+#   same release commit — the script only propagates the version string.
+# - The Kotlin SDK version pin lives in the sibling core/ repo and is versioned
+#   there; this app consumes it via composite includeBuild.
+
+[release]
+docs = ["CHANGELOG.md"]
+tag_prefix = "v"

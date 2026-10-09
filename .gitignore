@@ -1,0 +1,23 @@
+# Build outputs (android + shared composite builds)
+**/build/
+**/.gradle/
+**/.kotlin/
+**/local.properties
+.cxx/
+.externalNativeBuild/
+.captures/
+
+# IDE
+.idea/
+*.iml
+
+# Local agent tooling (wiring + skills load internally — machine-local)
+.opencode/
+
+# OS
+.DS_Store
+__pycache__/
+
+/dev
+# local agent/runtime logs (never commit — holds the local security key)
+logs/

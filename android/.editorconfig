@@ -1,0 +1,5 @@
+root = true
+
+[*.{kt,kts}]
+# Jetpack Compose @Composable functions are PascalCase by convention.
+ktlint_function_naming_ignore_when_annotated_with = Composable

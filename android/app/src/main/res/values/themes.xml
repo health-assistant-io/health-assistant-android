@@ -1,0 +1,27 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme (XML — used for the launch screen before Compose mounts). -->
+    <style name="Theme.HealthAssistant" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/ha_primary</item>
+        <item name="colorPrimaryVariant">@color/ha_primary_dark</item>
+        <item name="colorOnPrimary">@color/ha_on_primary</item>
+        <item name="colorSecondary">@color/ha_secondary</item>
+        <item name="colorOnSecondary">@color/ha_on_primary</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:windowBackground">@color/ha_background</item>
+    </style>
+
+    <!-- Compose screens render their own top app bar. -->
+    <style name="Theme.HealthAssistant.NoActionBar" parent="Theme.HealthAssistant">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <!-- R8: branded launch (androidx.core:core-splashscreen). The app theme is
+         the post-splash theme; the launch screen shows the dark slate brand
+         background + gradient pulse before Compose mounts. -->
+    <style name="Theme.HealthAssistant.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/ha_splash_bg</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
+        <item name="postSplashScreenTheme">@style/Theme.HealthAssistant.NoActionBar</item>
+    </style>
+</resources>

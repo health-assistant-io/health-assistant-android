@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand palette (kept for the XML splash / launcher only; Compose reads
+         ui/theme/Color.kt). Calm clinical teal + warm neutrals. -->
+    <color name="ha_primary">#FF009F98</color>
+    <color name="ha_primary_dark">#FF007873</color>
+    <color name="ha_primary_light">#FF4CD8D2</color>
+    <color name="ha_on_primary">#FFFFFFFF</color>
+    <color name="ha_secondary">#FF007873</color>
+    <color name="ha_background">#FFFAFCFB</color>
+    <color name="ha_error">#FFBA1A1A</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="ha_splash_bg">#FF0F172A</color>
+</resources>

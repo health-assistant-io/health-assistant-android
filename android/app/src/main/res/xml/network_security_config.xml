@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!--
+      Phase B security posture (implements app/dev/plans/mobile-app-v2 §B.3):
+      - Off-LAN: cleartext DENIED. Health data must not cross the network in
+        the clear. HMAC protects request integrity but not confidentiality,
+        so TLS is mandatory for anything reachable over the open internet.
+      - On-LAN: the user may explicitly allow a private-IP / loopback /
+        link-local host (the "LAN HTTP" toggle in SyncSettings) — the bridge
+        client enforces that host-allowlist in code on top of this config.
+      - Self-signed / private CA on LAN: trust-on-first-use (TOFU) is handled
+        in code (a custom X509TrustManager that records the first-seen cert
+        fingerprint per host and refuses on mismatch). The platform cert
+        validator continues to handle public CAs as normal.
+    -->
+    <base-config cleartextTrafficSupport="false">
+        <trust-anchors>
+            <certificates src="system" />
+            <!-- User-installed CAs (e.g. a self-signed LAN cert accepted via
+                 TOFU). Excluded from the release build below. -->
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions & usage help
+    url: https://github.com/health-assistant-io/health-assistant-android/discussions
+    about: Ask how to use a feature — the user guide + community answers live here.

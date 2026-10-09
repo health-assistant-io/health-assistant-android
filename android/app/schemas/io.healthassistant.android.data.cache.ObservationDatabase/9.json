@@ -1,0 +1,1057 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 9,
+    "identityHash": "c0677f9306e0a738a3915a2200bf15a0",
+    "entities": [
+      {
+        "tableName": "observation_cache",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`connection_id` TEXT NOT NULL, `biomarker_code` TEXT NOT NULL, `id` TEXT NOT NULL, `effective_datetime` TEXT, `effective_epoch_ms` INTEGER, `raw_value` REAL, `normalized_value` REAL, `normalized_unit` TEXT, `value_string` TEXT, `code_text` TEXT, `coding_display` TEXT, `coding_system` TEXT, `reference_range_low` REAL, `reference_range_high` REAL, `biomarker_id` TEXT, `biomarker_slug` TEXT, `biomarker_value_type` TEXT, `interpretation` TEXT, `relative_score` REAL, `biomarker_reference_range_min` REAL, `biomarker_reference_range_max` REAL, PRIMARY KEY(`connection_id`, `id`))",
+        "fields": [
+          {
+            "fieldPath": "connectionId",
+            "columnName": "connection_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "biomarkerCode",
+            "columnName": "biomarker_code",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "effectiveDatetime",
+            "columnName": "effective_datetime",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "effectiveEpochMs",
+            "columnName": "effective_epoch_ms",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "rawValue",
+            "columnName": "raw_value",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "normalizedValue",
+            "columnName": "normalized_value",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "normalizedUnit",
+            "columnName": "normalized_unit",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "valueString",
+            "columnName": "value_string",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "codeText",
+            "columnName": "code_text",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "codingDisplay",
+            "columnName": "coding_display",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "codingSystem",
+            "columnName": "coding_system",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "referenceRangeLow",
+            "columnName": "reference_range_low",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "referenceRangeHigh",
+            "columnName": "reference_range_high",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "biomarkerId",
+            "columnName": "biomarker_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "biomarkerSlug",
+            "columnName": "biomarker_slug",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "biomarkerValueType",
+            "columnName": "biomarker_value_type",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "interpretation",
+            "columnName": "interpretation",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "relativeScore",
+            "columnName": "relative_score",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "biomarkerReferenceRangeMin",
+            "columnName": "biomarker_reference_range_min",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "biomarkerReferenceRangeMax",
+            "columnName": "biomarker_reference_range_max",
+            "affinity": "REAL"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "connection_id",
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_observation_cache_connection_id_biomarker_code",
+            "unique": false,
+            "columnNames": [
+              "connection_id",
+              "biomarker_code"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_observation_cache_connection_id_biomarker_code` ON `${TABLE_NAME}` (`connection_id`, `biomarker_code`)"
+          },
+          {
+            "name": "index_observation_cache_connection_id_biomarker_code_effective_epoch_ms",
+            "unique": false,
+            "columnNames": [
+              "connection_id",
+              "biomarker_code",
+              "effective_epoch_ms"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_observation_cache_connection_id_biomarker_code_effective_epoch_ms` ON `${TABLE_NAME}` (`connection_id`, `biomarker_code`, `effective_epoch_ms`)"
+          }
+        ]
+      },
+      {
+        "tableName": "outbox",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `method` TEXT NOT NULL, `path` TEXT NOT NULL, `payload` BLOB NOT NULL, `lane` TEXT NOT NULL, `content_ref` TEXT, `status` TEXT NOT NULL, `attempts` INTEGER NOT NULL, `next_attempt_at` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `dead_reason` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "method",
+            "columnName": "method",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "path",
+            "columnName": "path",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "payload",
+            "columnName": "payload",
+            "affinity": "BLOB",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lane",
+            "columnName": "lane",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contentRef",
+            "columnName": "content_ref",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "attempts",
+            "columnName": "attempts",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nextAttemptAt",
+            "columnName": "next_attempt_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deadReason",
+            "columnName": "dead_reason",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_outbox_lane_status_next_attempt_at",
+            "unique": false,
+            "columnNames": [
+              "lane",
+              "status",
+              "next_attempt_at"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_outbox_lane_status_next_attempt_at` ON `${TABLE_NAME}` (`lane`, `status`, `next_attempt_at`)"
+          }
+        ]
+      },
+      {
+        "tableName": "biomarker_cache",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`connection_id` TEXT NOT NULL, `id` TEXT NOT NULL, `name` TEXT NOT NULL, `slug` TEXT, `code` TEXT, `coding_system` TEXT, `unit` TEXT, `is_telemetry` INTEGER NOT NULL, `reference_range_min` REAL, `reference_range_max` REAL, `value_type` TEXT, `info` TEXT, PRIMARY KEY(`connection_id`, `id`))",
+        "fields": [
+          {
+            "fieldPath": "connectionId",
+            "columnName": "connection_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "slug",
+            "columnName": "slug",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "code",
+            "columnName": "code",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "codingSystem",
+            "columnName": "coding_system",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "unit",
+            "columnName": "unit",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "isTelemetry",
+            "columnName": "is_telemetry",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "referenceRangeMin",
+            "columnName": "reference_range_min",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "referenceRangeMax",
+            "columnName": "reference_range_max",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "valueType",
+            "columnName": "value_type",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "info",
+            "columnName": "info",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "connection_id",
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_biomarker_cache_connection_id_code",
+            "unique": false,
+            "columnNames": [
+              "connection_id",
+              "code"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_biomarker_cache_connection_id_code` ON `${TABLE_NAME}` (`connection_id`, `code`)"
+          }
+        ]
+      },
+      {
+        "tableName": "examination_cache",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`connection_id` TEXT NOT NULL, `id` TEXT NOT NULL, `examination_date` TEXT, `notes` TEXT, `patient_notes` TEXT, `extraction_status` TEXT, `diagnoses` TEXT, `impressions` TEXT, `category` TEXT, `lab_name` TEXT, `external_id` TEXT, PRIMARY KEY(`connection_id`, `id`))",
+        "fields": [
+          {
+            "fieldPath": "connectionId",
+            "columnName": "connection_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "examinationDate",
+            "columnName": "examination_date",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "patientNotes",
+            "columnName": "patient_notes",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "extractionStatus",
+            "columnName": "extraction_status",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "diagnoses",
+            "columnName": "diagnoses",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "impressions",
+            "columnName": "impressions",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "category",
+            "columnName": "category",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "labName",
+            "columnName": "lab_name",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "externalId",
+            "columnName": "external_id",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "connection_id",
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_examination_cache_connection_id_examination_date",
+            "unique": false,
+            "columnNames": [
+              "connection_id",
+              "examination_date"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_examination_cache_connection_id_examination_date` ON `${TABLE_NAME}` (`connection_id`, `examination_date`)"
+          }
+        ]
+      },
+      {
+        "tableName": "document_cache",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`connection_id` TEXT NOT NULL, `id` TEXT NOT NULL, `filename` TEXT, `status` TEXT, `progress` REAL, `external_id` TEXT, `created_at` TEXT, `content_type` TEXT, `file_size` INTEGER, `examination_id` TEXT, `local_path` TEXT, `local_cached_at` INTEGER, PRIMARY KEY(`connection_id`, `id`))",
+        "fields": [
+          {
+            "fieldPath": "connectionId",
+            "columnName": "connection_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "filename",
+            "columnName": "filename",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "progress",
+            "columnName": "progress",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "externalId",
+            "columnName": "external_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "contentType",
+            "columnName": "content_type",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "fileSize",
+            "columnName": "file_size",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "examinationId",
+            "columnName": "examination_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "localPath",
+            "columnName": "local_path",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "localCachedAt",
+            "columnName": "local_cached_at",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "connection_id",
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_document_cache_connection_id_examination_id_created_at",
+            "unique": false,
+            "columnNames": [
+              "connection_id",
+              "examination_id",
+              "created_at"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_document_cache_connection_id_examination_id_created_at` ON `${TABLE_NAME}` (`connection_id`, `examination_id`, `created_at`)"
+          }
+        ]
+      },
+      {
+        "tableName": "medication_cache",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`connectionId` TEXT NOT NULL, `id` TEXT NOT NULL, `status` TEXT, `intent` TEXT, `codeJson` TEXT, `startDate` TEXT, `endDate` TEXT, `dosage` TEXT, `frequencyJson` TEXT, `reason` TEXT, `note` TEXT, `examinationId` TEXT, `createdAt` TEXT, `updatedAt` TEXT, PRIMARY KEY(`connectionId`, `id`))",
+        "fields": [
+          {
+            "fieldPath": "connectionId",
+            "columnName": "connectionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "intent",
+            "columnName": "intent",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "codeJson",
+            "columnName": "codeJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "startDate",
+            "columnName": "startDate",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "endDate",
+            "columnName": "endDate",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "dosage",
+            "columnName": "dosage",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "frequencyJson",
+            "columnName": "frequencyJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "reason",
+            "columnName": "reason",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "note",
+            "columnName": "note",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "examinationId",
+            "columnName": "examinationId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "connectionId",
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_medication_cache_connectionId_startDate",
+            "unique": false,
+            "columnNames": [
+              "connectionId",
+              "startDate"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_medication_cache_connectionId_startDate` ON `${TABLE_NAME}` (`connectionId`, `startDate`)"
+          }
+        ]
+      },
+      {
+        "tableName": "allergy_cache",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`connectionId` TEXT NOT NULL, `id` TEXT NOT NULL, `clinicalStatus` TEXT, `verificationStatus` TEXT, `category` TEXT, `criticality` TEXT, `codeJson` TEXT, `onsetDate` TEXT, `resolvedDate` TEXT, `lastOccurrence` TEXT, `note` TEXT, `reactionsJson` TEXT, `createdAt` TEXT, `updatedAt` TEXT, PRIMARY KEY(`connectionId`, `id`))",
+        "fields": [
+          {
+            "fieldPath": "connectionId",
+            "columnName": "connectionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "clinicalStatus",
+            "columnName": "clinicalStatus",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "verificationStatus",
+            "columnName": "verificationStatus",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "category",
+            "columnName": "category",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "criticality",
+            "columnName": "criticality",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "codeJson",
+            "columnName": "codeJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "onsetDate",
+            "columnName": "onsetDate",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "resolvedDate",
+            "columnName": "resolvedDate",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastOccurrence",
+            "columnName": "lastOccurrence",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "note",
+            "columnName": "note",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "reactionsJson",
+            "columnName": "reactionsJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "connectionId",
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_allergy_cache_connectionId_clinicalStatus",
+            "unique": false,
+            "columnNames": [
+              "connectionId",
+              "clinicalStatus"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_allergy_cache_connectionId_clinicalStatus` ON `${TABLE_NAME}` (`connectionId`, `clinicalStatus`)"
+          }
+        ]
+      },
+      {
+        "tableName": "vaccine_cache",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`connectionId` TEXT NOT NULL, `id` TEXT NOT NULL, `status` TEXT, `vaccineCodeJson` TEXT, `administeredAt` TEXT, `doseNumber` TEXT, `lotNumber` TEXT, `manufacturer` TEXT, `location` TEXT, `note` TEXT, `examinationId` TEXT, `createdAt` TEXT, `updatedAt` TEXT, PRIMARY KEY(`connectionId`, `id`))",
+        "fields": [
+          {
+            "fieldPath": "connectionId",
+            "columnName": "connectionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "vaccineCodeJson",
+            "columnName": "vaccineCodeJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "administeredAt",
+            "columnName": "administeredAt",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "doseNumber",
+            "columnName": "doseNumber",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lotNumber",
+            "columnName": "lotNumber",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "manufacturer",
+            "columnName": "manufacturer",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "location",
+            "columnName": "location",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "note",
+            "columnName": "note",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "examinationId",
+            "columnName": "examinationId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "connectionId",
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_vaccine_cache_connectionId_administeredAt",
+            "unique": false,
+            "columnNames": [
+              "connectionId",
+              "administeredAt"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_vaccine_cache_connectionId_administeredAt` ON `${TABLE_NAME}` (`connectionId`, `administeredAt`)"
+          }
+        ]
+      },
+      {
+        "tableName": "clinical_event_cache",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`connectionId` TEXT NOT NULL, `id` TEXT NOT NULL, `patientId` TEXT, `typeId` TEXT, `typeName` TEXT, `typeSlug` TEXT, `typeIcon` TEXT, `typeColor` TEXT, `status` TEXT, `title` TEXT, `description` TEXT, `onsetDate` TEXT, `resolvedDate` TEXT, `codingSystem` TEXT, `code` TEXT, `createdAt` TEXT, `updatedAt` TEXT, PRIMARY KEY(`connectionId`, `id`))",
+        "fields": [
+          {
+            "fieldPath": "connectionId",
+            "columnName": "connectionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "patientId",
+            "columnName": "patientId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "typeId",
+            "columnName": "typeId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "typeName",
+            "columnName": "typeName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "typeSlug",
+            "columnName": "typeSlug",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "typeIcon",
+            "columnName": "typeIcon",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "typeColor",
+            "columnName": "typeColor",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "onsetDate",
+            "columnName": "onsetDate",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "resolvedDate",
+            "columnName": "resolvedDate",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "codingSystem",
+            "columnName": "codingSystem",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "code",
+            "columnName": "code",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "connectionId",
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_clinical_event_cache_connectionId_onsetDate",
+            "unique": false,
+            "columnNames": [
+              "connectionId",
+              "onsetDate"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_clinical_event_cache_connectionId_onsetDate` ON `${TABLE_NAME}` (`connectionId`, `onsetDate`)"
+          }
+        ]
+      },
+      {
+        "tableName": "notification_cache",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`connectionId` TEXT NOT NULL, `recipientId` TEXT NOT NULL, `status` TEXT, `readAt` TEXT, `dismissedAt` TEXT, `notificationId` TEXT, `title` TEXT, `body` TEXT, `type` TEXT, `category` TEXT, `severity` TEXT, `source` TEXT, `payloadJson` TEXT, `patientId` TEXT, `createdAt` TEXT, PRIMARY KEY(`connectionId`, `recipientId`))",
+        "fields": [
+          {
+            "fieldPath": "connectionId",
+            "columnName": "connectionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recipientId",
+            "columnName": "recipientId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "readAt",
+            "columnName": "readAt",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "dismissedAt",
+            "columnName": "dismissedAt",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "notificationId",
+            "columnName": "notificationId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "body",
+            "columnName": "body",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "category",
+            "columnName": "category",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "severity",
+            "columnName": "severity",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "payloadJson",
+            "columnName": "payloadJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "patientId",
+            "columnName": "patientId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "connectionId",
+            "recipientId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_notification_cache_connectionId_readAt",
+            "unique": false,
+            "columnNames": [
+              "connectionId",
+              "readAt"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_notification_cache_connectionId_readAt` ON `${TABLE_NAME}` (`connectionId`, `readAt`)"
+          }
+        ]
+      },
+      {
+        "tableName": "cache_meta",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`connection_id` TEXT NOT NULL, `domain` TEXT NOT NULL, `filter_key` TEXT NOT NULL DEFAULT '', `last_success_at` INTEGER NOT NULL DEFAULT 0, `last_error` TEXT, `row_count` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`connection_id`, `domain`, `filter_key`))",
+        "fields": [
+          {
+            "fieldPath": "connectionId",
+            "columnName": "connection_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "domain",
+            "columnName": "domain",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "filterKey",
+            "columnName": "filter_key",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "lastSuccessAtEpochMs",
+            "columnName": "last_success_at",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "lastError",
+            "columnName": "last_error",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "rowCount",
+            "columnName": "row_count",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "connection_id",
+            "domain",
+            "filter_key"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c0677f9306e0a738a3915a2200bf15a0')"
+    ]
+  }
+}

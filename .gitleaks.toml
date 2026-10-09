@@ -1,0 +1,17 @@
+# gitleaks config — extends the default ruleset. The only suppressions are
+# COMMITTED TEST FIXTURE credentials (onboarding-parser tests): obviously-fake
+# values pinned so QR/paste-code parsing is deterministic. No real secret has
+# ever been committed (verified: full-history gitleaks scan flags only these).
+title = "health-assistant-android gitleaks"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+  description = "committed onboarding test fixtures — fake by construction"
+  regexes = [
+    '''0123456789abcdef''',
+    '''00000000-0000-0000-0000-000000000000''',
+    '''123e4567-e89b-42d3-a456-426614174000''',
+    '''health\.example\.io''',
+  ]

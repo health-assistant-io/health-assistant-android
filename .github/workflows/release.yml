@@ -1,0 +1,84 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    name: Build + attach release APK
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone the sibling core/ repo (bridge Kotlin SDK)
+        run: git clone --depth 1 https://github.com/health-assistant-io/health-assistant.git "$GITHUB_WORKSPACE/../core"
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - uses: android-actions/setup-android@v3
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Verify tag matches app version
+        working-directory: .
+        run: |
+          VERSION="$(python3 -c "import re;print(re.search(r'versionName\s*=\s*\"([^\"]+)\"', open('android/app/build.gradle.kts').read()).group(1))")"
+          if [[ "refs/tags/v$VERSION" != "$GITHUB_REF" ]]; then
+            echo "Tag $GITHUB_REF does not match app versionName v$VERSION" >&2
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Decode the release keystore (when configured)
+        working-directory: .
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 --decode > "$GITHUB_WORKSPACE/release.jks"
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+
+      - name: Assemble release APK
+        run: >
+          ./gradlew :app:assembleRelease
+          ${KEYSTORE_BASE64:+
+          -PkeystoreFile=$GITHUB_WORKSPACE/release.jks
+          -PkeystoreStorePassword=$KEYSTORE_STORE_PASSWORD
+          -PkeystoreAlias=$KEYSTORE_ALIAS
+          -PkeystoreKeyPassword=$KEYSTORE_KEY_PASSWORD}
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
+          KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+
+      - name: Rename artifacts (versioned + stable alias)
+        working-directory: .
+        run: |
+          mkdir -p dist
+          cp android/app/build/outputs/apk/release/app-release.apk "dist/health-assistant-android-$VERSION.apk"
+          cp android/app/build/outputs/apk/release/app-release.apk "dist/health-assistant-android-latest.apk"
+
+      - name: Attach to the GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/health-assistant-android-${{ env.VERSION }}.apk
+            dist/health-assistant-android-latest.apk
+          generate_release_notes: true
+          body: |
+            **Health Assistant — Android app v${{ env.VERSION }}**
+
+            Android 9 (API 28)+. See [the changelog](https://github.com/health-assistant-io/health-assistant-android/blob/main/CHANGELOG.md)
+            and the [user guide](https://github.com/health-assistant-io/health-assistant-android/blob/main/docs/user/README.md).
+
+            - `health-assistant-android-$VERSION.apk` — this release
+            - `health-assistant-android-latest.apk` — stable-name alias (always the newest release)
