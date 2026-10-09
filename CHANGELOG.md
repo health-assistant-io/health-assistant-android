@@ -12,6 +12,7 @@ tagged `vX.Y.Z` via `scripts/version_manager.py`.
 
 ### Changed
 
+- **Profile redesign** — the gray card containers are gone: settings render as transparent groups with inset hairline dividers between rows (the modern settings-list look), matching the mode + appearance sections and the flattened connection block.
 - **Home header rework** — the server URL is gone from the header (it lives in Profile), the "Ask the assistant" card became a compact **AI button** in the header, and a new **status dropdown** (next to the AI button) gathers the sync status ("Up to date · Updated X ago" / syncing / offline / needs attention), a Sync-now action, **Edit dashboard**, the **Layout style** picker (Grid/List/Simple), and connection switching — replacing the separate status row, view-style menu, and edit button.
 
 ### Added

@@ -1,6 +1,5 @@
 package io.healthassistant.android.ui
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -32,25 +31,25 @@ fun AppModeSection(
     onSelect: (UiMode) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(modifier = modifier.fillMaxWidth()) {
-        Column(
-            Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            Text(stringResource(R.string.mode_title), style = MaterialTheme.typography.titleMedium)
-            ModeOptionRow(
-                label = stringResource(R.string.mode_simple),
-                hint = stringResource(R.string.mode_simple_hint),
-                selected = mode == UiMode.SIMPLE,
-                onClick = { onSelect(UiMode.SIMPLE) },
-            )
-            ModeOptionRow(
-                label = stringResource(R.string.mode_advanced),
-                hint = stringResource(R.string.mode_advanced_hint),
-                selected = mode == UiMode.ADVANCED,
-                onClick = { onSelect(UiMode.ADVANCED) },
-            )
-        }
+    Column(modifier = modifier.fillMaxWidth()) {
+        Text(
+            stringResource(R.string.mode_title),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(horizontal = 4.dp),
+        )
+        ModeOptionRow(
+            label = stringResource(R.string.mode_simple),
+            hint = stringResource(R.string.mode_simple_hint),
+            selected = mode == UiMode.SIMPLE,
+            onClick = { onSelect(UiMode.SIMPLE) },
+        )
+        HorizontalDivider(Modifier.padding(start = 40.dp), color = MaterialTheme.colorScheme.outlineVariant)
+        ModeOptionRow(
+            label = stringResource(R.string.mode_advanced),
+            hint = stringResource(R.string.mode_advanced_hint),
+            selected = mode == UiMode.ADVANCED,
+            onClick = { onSelect(UiMode.ADVANCED) },
+        )
     }
 }
 

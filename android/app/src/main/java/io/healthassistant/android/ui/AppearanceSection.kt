@@ -1,7 +1,6 @@
 package io.healthassistant.android.ui
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -39,34 +38,35 @@ fun AppearanceSection(
     onSelect: (UiTheme) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(modifier = modifier.fillMaxWidth()) {
-        Column(
-            Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            Text(stringResource(R.string.appearance_title), style = MaterialTheme.typography.titleMedium)
-            ThemeOptionRow(
-                label = stringResource(R.string.theme_aurora),
-                hint = stringResource(R.string.theme_aurora_hint),
-                swatch = SwatchColors(AuroraLightColors.primary, AuroraLightColors.primaryContainer, AuroraDarkColors.primary),
-                selected = theme == UiTheme.AURORA,
-                onClick = { onSelect(UiTheme.AURORA) },
-            )
-            ThemeOptionRow(
-                label = stringResource(R.string.theme_teal),
-                hint = stringResource(R.string.theme_teal_hint),
-                swatch = SwatchColors(HALightColors.primary, HALightColors.primaryContainer, HADarkColors.primary),
-                selected = theme == UiTheme.TEAL,
-                onClick = { onSelect(UiTheme.TEAL) },
-            )
-            ThemeOptionRow(
-                label = stringResource(R.string.theme_material_you),
-                hint = stringResource(R.string.theme_material_you_hint),
-                swatch = SwatchColors(Color(0xFF5B69E0), Color(0xFFD8DEFF), Color(0xFFBEC2FF)),
-                selected = theme == UiTheme.MATERIAL_YOU,
-                onClick = { onSelect(UiTheme.MATERIAL_YOU) },
-            )
-        }
+    Column(modifier = modifier.fillMaxWidth()) {
+        Text(
+            stringResource(R.string.appearance_title),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(horizontal = 4.dp),
+        )
+        ThemeOptionRow(
+            label = stringResource(R.string.theme_aurora),
+            hint = stringResource(R.string.theme_aurora_hint),
+            swatch = SwatchColors(AuroraLightColors.primary, AuroraLightColors.primaryContainer, AuroraDarkColors.primary),
+            selected = theme == UiTheme.AURORA,
+            onClick = { onSelect(UiTheme.AURORA) },
+        )
+        HorizontalDivider(Modifier.padding(start = 40.dp), color = MaterialTheme.colorScheme.outlineVariant)
+        ThemeOptionRow(
+            label = stringResource(R.string.theme_teal),
+            hint = stringResource(R.string.theme_teal_hint),
+            swatch = SwatchColors(HALightColors.primary, HALightColors.primaryContainer, HADarkColors.primary),
+            selected = theme == UiTheme.TEAL,
+            onClick = { onSelect(UiTheme.TEAL) },
+        )
+        HorizontalDivider(Modifier.padding(start = 40.dp), color = MaterialTheme.colorScheme.outlineVariant)
+        ThemeOptionRow(
+            label = stringResource(R.string.theme_material_you),
+            hint = stringResource(R.string.theme_material_you_hint),
+            swatch = SwatchColors(Color(0xFF5B69E0), Color(0xFFD8DEFF), Color(0xFFBEC2FF)),
+            selected = theme == UiTheme.MATERIAL_YOU,
+            onClick = { onSelect(UiTheme.MATERIAL_YOU) },
+        )
     }
 }
 

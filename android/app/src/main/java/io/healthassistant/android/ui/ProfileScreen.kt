@@ -27,7 +27,7 @@ import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.material.icons.outlined.SwapHoriz
 import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -90,36 +90,35 @@ fun ProfileScreen(
         }
         Spacer(Modifier.height(4.dp))
 
-        ConnectionCard(
+        ConnectionSection(
             connectionLabel = connectionLabel,
             connectionId = connectionId,
             onSwitchConnection = onSwitchConnection,
             onDisconnect = onDisconnect,
         )
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(16.dp))
         AppModeSection(
             mode = mode,
             onSelect = onSetMode,
         )
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(16.dp))
         AppearanceSection(
             theme = theme,
             onSelect = onSetTheme,
         )
         onOpenWebApp?.let {
-            Spacer(Modifier.height(4.dp))
-            Card(Modifier.fillMaxWidth()) {
-                SettingsRow(
-                    icon = Icons.Outlined.Language,
-                    title = stringResource(R.string.profile_open_web),
-                    subtitle = stringResource(R.string.profile_open_web_subtitle),
-                    onClick = it,
-                )
-            }
+            Spacer(Modifier.height(16.dp))
+            SettingsRow(
+                icon = Icons.Outlined.Language,
+                title = stringResource(R.string.profile_open_web),
+                subtitle = stringResource(R.string.profile_open_web_subtitle),
+                onClick = it,
+                showDivider = false,
+            )
         }
-        Spacer(Modifier.height(4.dp))
+        Spacer(Modifier.height(16.dp))
 
-        SettingsCard {
+        SettingsSection {
             onOpenSync?.let {
                 SettingsRow(
                     icon = Icons.Outlined.Sync,
@@ -181,6 +180,7 @@ fun ProfileScreen(
                 icon = Icons.Outlined.Info,
                 title = stringResource(R.string.profile_about_section),
                 onClick = onOpenAbout,
+                showDivider = false,
             )
         }
         Spacer(Modifier.height(8.dp))
@@ -188,87 +188,103 @@ fun ProfileScreen(
 }
 
 @Composable
-private fun ConnectionCard(
+private fun ConnectionSection(
     connectionLabel: String?,
     connectionId: String?,
     onSwitchConnection: (() -> Unit)?,
     onDisconnect: (() -> Unit)?,
 ) {
-    Card(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(stringResource(R.string.profile_connection_section), style = MaterialTheme.typography.titleMedium)
-            connectionLabel?.let {
-                Text(stringResource(R.string.profile_server, it), style = MaterialTheme.typography.bodyMedium)
-            }
-            connectionId?.let {
-                Text(stringResource(R.string.profile_connection_id, it), style = MaterialTheme.typography.bodyMedium)
-            }
-            Spacer(Modifier.size(8.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                onSwitchConnection?.let {
-                    OutlinedButton(onClick = it) {
-                        Icon(Icons.Outlined.SwapHoriz, contentDescription = null)
-                        Spacer(Modifier.size(8.dp))
-                        Text(stringResource(R.string.dashboard_switch))
-                    }
+    Column(Modifier.fillMaxWidth()) {
+        Text(
+            stringResource(R.string.profile_connection_section),
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Spacer(Modifier.height(4.dp))
+        connectionLabel?.let {
+            Text(stringResource(R.string.profile_server, it), style = MaterialTheme.typography.bodyMedium)
+        }
+        connectionId?.let {
+            Text(
+                stringResource(R.string.profile_connection_id, it),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Spacer(Modifier.size(8.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            onSwitchConnection?.let {
+                OutlinedButton(onClick = it) {
+                    Icon(Icons.Outlined.SwapHoriz, contentDescription = null)
+                    Spacer(Modifier.size(8.dp))
+                    Text(stringResource(R.string.dashboard_switch))
                 }
-                onDisconnect?.let {
-                    TextButton(onClick = it) {
-                        Text(stringResource(R.string.dashboard_disconnect))
-                    }
+            }
+            onDisconnect?.let {
+                TextButton(onClick = it) {
+                    Text(stringResource(R.string.dashboard_disconnect))
                 }
             }
         }
     }
 }
 
-/** One grouped card of [SettingsRow]s (the settings-list look). */
+/** A transparent group of [SettingsRow]s — no card chrome; rows are
+ *  separated by inset hairline dividers (the modern settings-list look). */
 @Composable
-private fun SettingsCard(content: @Composable () -> Unit) {
-    Card(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(vertical = 4.dp)) {
-            content()
-        }
+private fun SettingsSection(content: @Composable () -> Unit) {
+    Column(Modifier.fillMaxWidth()) {
+        content()
     }
 }
 
-/** A single tappable settings row: leading icon, title (+ optional subtitle), trailing chevron. */
+/** A single tappable settings row: leading icon, title (+ optional subtitle),
+ *  trailing chevron, and an inset divider underneath unless it is the group's
+ *  last row ([showDivider] = false). */
 @Composable
 private fun SettingsRow(
     icon: ImageVector,
     title: String,
     onClick: () -> Unit,
     subtitle: String? = null,
+    showDivider: Boolean = true,
 ) {
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            icon,
-            contentDescription = null,
-            modifier = Modifier.size(22.dp),
-            tint = MaterialTheme.colorScheme.primary,
-        )
-        Spacer(Modifier.size(14.dp))
-        Column(Modifier.weight(1f)) {
-            Text(title, style = MaterialTheme.typography.bodyLarge)
-            subtitle?.let {
-                Text(
-                    it,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+    Column {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 4.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                icon,
+                contentDescription = null,
+                modifier = Modifier.size(22.dp),
+                tint = MaterialTheme.colorScheme.primary,
+            )
+            Spacer(Modifier.size(14.dp))
+            Column(Modifier.weight(1f)) {
+                Text(title, style = MaterialTheme.typography.bodyLarge)
+                subtitle?.let {
+                    Text(
+                        it,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
+            Icon(
+                Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
-        Icon(
-            Icons.AutoMirrored.Filled.KeyboardArrowRight,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        if (showDivider) {
+            HorizontalDivider(
+                modifier = Modifier.padding(start = 40.dp),
+                color = MaterialTheme.colorScheme.outlineVariant,
+            )
+        }
     }
 }
 
