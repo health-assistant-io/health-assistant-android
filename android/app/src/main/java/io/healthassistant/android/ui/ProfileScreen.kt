@@ -1,7 +1,9 @@
 package io.healthassistant.android.ui
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,18 +17,23 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Accessibility
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.CloudSync
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.NotificationsActive
+import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Storage
 import androidx.compose.material.icons.outlined.SwapHoriz
 import androidx.compose.material.icons.outlined.Sync
+import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -34,14 +41,23 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.healthassistant.android.R
 import io.healthassistant.android.settings.UiMode
 import io.healthassistant.android.settings.UiTheme
+import io.healthassistant.android.ui.theme.AuroraDarkColors
+import io.healthassistant.android.ui.theme.AuroraLightColors
+import io.healthassistant.android.ui.theme.HADarkColors
+import io.healthassistant.android.ui.theme.HALightColors
 
 /**
  * Profile tab — the settings hub. Each concern lives on its own detail page
@@ -97,15 +113,11 @@ fun ProfileScreen(
             onDisconnect = onDisconnect,
         )
         Spacer(Modifier.height(16.dp))
-        AppModeSection(
-            mode = mode,
-            onSelect = onSetMode,
-        )
-        Spacer(Modifier.height(16.dp))
-        AppearanceSection(
-            theme = theme,
-            onSelect = onSetTheme,
-        )
+        SettingsSection {
+            ModeRowWithMenu(mode = mode, onSelect = onSetMode)
+            HorizontalDivider(Modifier.padding(start = 40.dp), color = MaterialTheme.colorScheme.outlineVariant)
+            ThemeRowWithMenu(theme = theme, onSelect = onSetTheme, showDivider = false)
+        }
         onOpenWebApp?.let {
             Spacer(Modifier.height(16.dp))
             SettingsRow(
@@ -234,6 +246,115 @@ private fun ConnectionSection(
 private fun SettingsSection(content: @Composable () -> Unit) {
     Column(Modifier.fillMaxWidth()) {
         content()
+    }
+}
+
+/** Profile's Simple/Advanced pick, compact: one row showing the current
+ *  level; tapping opens a dropdown with the two options (the expanded
+ *  [AppModeSection] stays in the onboarding wizard, where it is the main
+ *  content). */
+@Composable
+private fun ModeRowWithMenu(
+    mode: UiMode,
+    onSelect: (UiMode) -> Unit,
+) {
+    var menuOpen by remember { mutableStateOf(false) }
+    Box {
+        SettingsRow(
+            icon = Icons.Outlined.Tune,
+            title = stringResource(R.string.mode_title),
+            subtitle =
+                stringResource(
+                    if (mode == UiMode.SIMPLE) R.string.mode_simple else R.string.mode_advanced,
+                ),
+            onClick = { menuOpen = true },
+            showDivider = false,
+        )
+        DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+            UiMode.entries.forEach { option ->
+                DropdownMenuItem(
+                    text = {
+                        Column {
+                            Text(stringResource(if (option == UiMode.SIMPLE) R.string.mode_simple else R.string.mode_advanced))
+                            Text(
+                                stringResource(if (option == UiMode.SIMPLE) R.string.mode_simple_hint else R.string.mode_advanced_hint),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    },
+                    trailingIcon = {
+                        if (option == mode) {
+                            Icon(Icons.Outlined.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                        }
+                    },
+                    onClick = {
+                        menuOpen = false
+                        onSelect(option)
+                    },
+                )
+            }
+        }
+    }
+}
+
+/** Profile's Appearance pick, compact: one row showing the current theme;
+ *  tapping opens a dropdown with the three presets (swatch + name + check). */
+@Composable
+private fun ThemeRowWithMenu(
+    theme: UiTheme,
+    onSelect: (UiTheme) -> Unit,
+    showDivider: Boolean = true,
+) {
+    var menuOpen by remember { mutableStateOf(false) }
+    Box {
+        SettingsRow(
+            icon = Icons.Outlined.Palette,
+            title = stringResource(R.string.appearance_title),
+            subtitle = currentThemeLabel(theme),
+            onClick = { menuOpen = true },
+            showDivider = showDivider,
+        )
+        DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+            UiTheme.entries.forEach { option ->
+                DropdownMenuItem(
+                    text = { Text(currentThemeLabel(option)) },
+                    leadingIcon = { ThemeSwatch(option) },
+                    trailingIcon = {
+                        if (option == theme) {
+                            Icon(Icons.Outlined.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                        }
+                    },
+                    onClick = {
+                        menuOpen = false
+                        onSelect(option)
+                    },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun currentThemeLabel(theme: UiTheme): String =
+    when (theme) {
+        UiTheme.AURORA -> stringResource(R.string.theme_aurora)
+        UiTheme.TEAL -> stringResource(R.string.theme_teal)
+        UiTheme.MATERIAL_YOU -> stringResource(R.string.theme_material_you)
+    }
+
+@Composable
+private fun ThemeSwatch(theme: UiTheme) {
+    val colors =
+        when (theme) {
+            UiTheme.AURORA -> Triple(AuroraLightColors.primary, AuroraLightColors.primaryContainer, AuroraDarkColors.primary)
+            UiTheme.TEAL -> Triple(HALightColors.primary, HALightColors.primaryContainer, HADarkColors.primary)
+            UiTheme.MATERIAL_YOU -> Triple(Color(0xFF5B69E0), Color(0xFFD8DEFF), Color(0xFFBEC2FF))
+        }
+    Canvas(Modifier.size(width = 34.dp, height = 20.dp)) {
+        drawCircle(colors.third, radius = 9.dp.toPx(), center = center.copy(x = 9.dp.toPx()))
+        drawCircle(colors.first, radius = 9.dp.toPx(), center = center.copy(x = 17.dp.toPx()))
+        drawCircle(colors.second, radius = 5.dp.toPx(), center = center.copy(x = 17.dp.toPx()))
     }
 }
 

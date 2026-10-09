@@ -1,12 +1,12 @@
 package io.healthassistant.android.ui
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import io.healthassistant.android.settings.UiMode
+import io.healthassistant.android.settings.UiTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -159,12 +159,15 @@ class ProfileScreenTest {
     }
 
     @Test
-    fun mode_section_renders_both_options_and_marks_the_current_mode() {
+    fun mode_row_opens_a_dropdown_with_both_options() {
         screen()
 
         composeRule.onNodeWithText("How do you want to use the app?").performScrollTo().assertIsDisplayed()
-        composeRule.onNodeWithText("Simple (just the essentials)").performScrollTo().assertIsDisplayed()
-        composeRule.onNodeWithText("Advanced (all features)").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("How do you want to use the app?").performScrollTo().performClick()
+        composeRule.onNodeWithText("Your daily readings, records and connection — big, calm screens.").assertIsDisplayed()
+        composeRule
+            .onNodeWithText("Everything, including the doctors directory, server notifications and dashboard editing.")
+            .assertIsDisplayed()
     }
 
     @Test
@@ -190,9 +193,40 @@ class ProfileScreenTest {
             )
         }
 
-        composeRule.onNodeWithText("Advanced (all features)").performScrollTo().performClick()
+        composeRule.onNodeWithText("How do you want to use the app?").performScrollTo().performClick()
+        composeRule.onNodeWithText("Advanced (all features)").performClick()
 
         assertEquals(UiMode.ADVANCED, picked)
+    }
+
+    @Test
+    fun appearance_row_opens_a_dropdown_and_picking_a_theme_fires() {
+        var picked: UiTheme? = null
+        composeRule.setContent {
+            ProfileScreen(
+                connectionLabel = null,
+                connectionId = null,
+                onSwitchConnection = null,
+                onOpenWebApp = null,
+                onOpenSync = {},
+                onOpenSyncSettings = {},
+                onOpenDataStorage = null,
+                onOpenServerNotifications = null,
+                onOpenDeviceNotifications = {},
+                onOpenAccessibility = {},
+                onOpenPrivacy = {},
+                onOpenAbout = {},
+                onDisconnect = null,
+                theme = UiTheme.AURORA,
+                onSetTheme = { picked = it },
+            )
+        }
+
+        composeRule.onNodeWithText("Appearance").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Appearance").performScrollTo().performClick()
+        composeRule.onNodeWithText("Classic teal").performClick()
+
+        assertEquals(UiTheme.TEAL, picked)
     }
 
     @Test
@@ -215,6 +249,7 @@ class ProfileScreenTest {
             )
         }
 
-        composeRule.onNodeWithText("Simple (just the essentials)").performScrollTo().assertIsSelected()
+        composeRule.onNodeWithText("How do you want to use the app?").performScrollTo().performClick()
+        composeRule.onNodeWithText("Your daily readings, records and connection — big, calm screens.").assertIsDisplayed()
     }
 }
