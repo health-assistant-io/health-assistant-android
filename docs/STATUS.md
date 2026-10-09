@@ -40,6 +40,8 @@ Kept in the root [CHANGELOG.md](../CHANGELOG.md) (Keep-a-Changelog format;
 | Greek translations for accumulated `values-el` placeholders | pending | English placeholders are lint-legal but untranslated |
 | M3 leftovers (live HR tile on Home, today-vs-typical) | deferred | Superseded by the Home merge; revisit with user feedback |
 | M7 LTTB downsampling | deferred | Only if 1-year ranges feel slow (pinch-zoom windowing covers most cases) |
-| Remote + CI + published APK artifacts | missing | Repo is local-only today; needs remote, release workflow, real keystore |
+| Remote, CI, signing + published APK artifacts | ✅ landed 2026-10-09 — public repo, `ci.yml`/`release.yml`/`gitleaks.yml`, release keystore (+ secrets), v1.2.0 published with a signed APK |
+| Health Connect `connect-client` alpha bump | parked | Deliberate on-device-verified upgrade (new SDK-status constants broke lint in the grouped ride-along); Dependabot now excludes it |
+| Vico 2 → 3 major | parked (PR #9 open) | Chart-API rewrite on a core surface — dedicated change with on-device verification |
 | R7 roadmap (calendar view, AI bridging, analytics, anatomy explorer) | backlog | Calendar feasible app-side; the rest need `core/` work |
 | TalkBack full walkthrough on-device | pending | Chart/widget fallbacks shipped (M9); the walkthrough remains manual |
