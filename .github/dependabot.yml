@@ -9,6 +9,10 @@ updates:
         patterns:
           - "androidx.*"
           - "com.google.android.*"
+        exclude-patterns:
+          # Alpha-track artifacts update deliberately (constant/API churn +
+          # on-device verification), not as ride-alongs in the group.
+          - "androidx.health.connect:connect-client"
       kotlin:
         patterns:
           - "org.jetbrains.kotlin.*"
