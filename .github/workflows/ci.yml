@@ -16,7 +16,7 @@ jobs:
       run:
         working-directory: android
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # The app's Gradle build is a composite: `shared/` lives in this repo,
       # but the Kotlin bridge SDK is included from the sibling core/ checkout
