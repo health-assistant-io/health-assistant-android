@@ -347,7 +347,6 @@ fun AppRoot(
                 HomeRoute(
                     client = client ?: return@composable,
                     repository = monitorRepository,
-                    connectionLabel = activeCred?.baseUrl,
                     onSyncNow = {
                         scope.launch {
                             monitorRepository.recordSyncResult(

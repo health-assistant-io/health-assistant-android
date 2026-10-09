@@ -60,7 +60,6 @@ class SimpleModeGatingTest {
     fun profile_simple_mode_keeps_connection_mode_lock_about_and_hides_advanced() {
         composeRule.setContent {
             ProfileScreen(
-                connectionLabel = "https://health.example",
                 connectionId = "11111111-2222-3333-4444-555555555555",
                 onSwitchConnection = null,
                 onOpenWebApp = null,
@@ -73,6 +72,7 @@ class SimpleModeGatingTest {
                 onOpenPrivacy = {},
                 onOpenAbout = {},
                 onDisconnect = {},
+                connectionLabel = "https://health.example",
                 mode = UiMode.SIMPLE,
             )
         }
@@ -97,7 +97,6 @@ class SimpleModeGatingTest {
             HomeScreen(
                 monitor = homeMonitor(),
                 readings = emptyList(),
-                connectionLabel = null,
                 reachability = ServerReachability.Online,
                 onSyncNow = {},
                 onOpenEdit = null,

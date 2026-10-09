@@ -41,6 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.healthassistant.android.R
 import io.healthassistant.android.settings.UiMode
+import io.healthassistant.android.settings.UiTheme
 
 /**
  * Profile tab — the settings hub. Each concern lives on its own detail page
@@ -70,6 +71,8 @@ fun ProfileScreen(
     onDisconnect: (() -> Unit)?,
     mode: UiMode = UiMode.ADVANCED,
     onSetMode: (UiMode) -> Unit = {},
+    theme: UiTheme = UiTheme.AURORA,
+    onSetTheme: (UiTheme) -> Unit = {},
 ) {
     Column(
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
@@ -97,6 +100,11 @@ fun ProfileScreen(
         AppModeSection(
             mode = mode,
             onSelect = onSetMode,
+        )
+        Spacer(Modifier.height(12.dp))
+        AppearanceSection(
+            theme = theme,
+            onSelect = onSetTheme,
         )
         onOpenWebApp?.let {
             Spacer(Modifier.height(4.dp))

@@ -9,14 +9,21 @@ surfaces.
 - **Metric cards** — your latest reading per biomarker (value, unit,
   time-ago, in-range coloring, trend arrow vs the previous reading). Tap any
   card to open its chart.
+- **Header** — a compact **AI button** (opens the web assistant in a Chrome
+  Custom Tab) beside a **status dropdown**: sync status ("Up to date ·
+  Updated X ago", syncing, offline, or needs attention), **Sync now**,
+  **Edit dashboard** (which cards show and in what order — Advanced mode),
+  the **Layout** picker (Grid / List / Simple), and connection switching.
 - **Today's sections** — medications due, recent examinations, and an inbox
   preview with unread count, all in one scroll.
-- **View styles** — Grid, List, or Simple (large print); pick which cards
-  show and in what order (Advanced mode).
-- **Quiet sync row** — "Up to date · 2 min ago" or progress while syncing;
-  never the headline, always honest.
-- **Ask the assistant** — hands off to the web AI assistant in a Chrome
-  Custom Tab.
+
+## Appearance
+
+Profile › **Appearance** picks the color theme: **Aurora** (the default — a
+modern periwinkle-indigo palette), **Classic teal** (the original), or
+**Material You** (your wallpaper's colors, Android 12+). Applied instantly,
+no restart. AMOLED-black and high-contrast variants stay under Profile ›
+Accessibility and work with every theme.
 
 ## Records
 

@@ -11,6 +11,17 @@ enum class UiMode {
 }
 
 /**
+ * The app-wide color preset (Appearance, Profile). Mirrors
+ * [io.healthassistant.android.ui.theme.ThemePreset]; declared here so the
+ * settings layer stays theme-implementation-free.
+ */
+enum class UiTheme {
+    AURORA,
+    TEAL,
+    MATERIAL_YOU,
+}
+
+/**
  * Appearance / accessibility preferences the user can override from Profile
  * (R6 + K-simple-mode). Backed by DataStore via [UiPreferencesRepository].
  * These ride on top of the OS settings: [highContrast] and [reduceMotion]
@@ -22,4 +33,5 @@ data class UiPreferences(
     val highContrast: Boolean = false,
     val reduceMotion: Boolean = false,
     val mode: UiMode = UiMode.SIMPLE,
+    val theme: UiTheme = UiTheme.AURORA,
 )

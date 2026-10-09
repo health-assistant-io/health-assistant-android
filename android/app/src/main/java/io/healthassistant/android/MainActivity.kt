@@ -19,6 +19,7 @@ import io.healthassistant.android.settings.UiPreferencesRepository
 import io.healthassistant.android.ui.AppLockRoute
 import io.healthassistant.android.ui.AppRoot
 import io.healthassistant.android.ui.theme.HATheme
+import io.healthassistant.android.ui.theme.ThemePreset
 import io.healthassistant.android.widget.WidgetDeepLinks
 import io.healthassistant.shared.onboarding.Onboarding
 import org.koin.compose.koinInject
@@ -75,6 +76,12 @@ class MainActivity : FragmentActivity() {
             val isLocked by lockManager.isLocked.collectAsState()
             HATheme(
                 highContrast = uiPrefs.highContrast,
+                preset =
+                    when (uiPrefs.theme) {
+                        io.healthassistant.android.settings.UiTheme.TEAL -> ThemePreset.TEAL
+                        io.healthassistant.android.settings.UiTheme.MATERIAL_YOU -> ThemePreset.MATERIAL_YOU
+                        io.healthassistant.android.settings.UiTheme.AURORA -> ThemePreset.AURORA
+                    },
                 // Only an explicit "on" forces reduce-motion; otherwise follow the
                 // OS Developer-Options setting (null = system).
                 reduceMotion = uiPrefs.reduceMotion.takeIf { it },

@@ -56,5 +56,9 @@ fun ProfileRoute(
         onSetMode = { mode ->
             scope.launch { uiPrefsRepository.setMode(mode) }
         },
+        theme = uiPreferences.theme,
+        onSetTheme = { theme ->
+            scope.launch { uiPrefsRepository.setTheme(theme) }
+        },
     )
 }

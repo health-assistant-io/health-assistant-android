@@ -30,6 +30,7 @@ class UiPreferencesRepository(
                 highContrast = prefs[HIGH_CONTRAST] ?: false,
                 reduceMotion = prefs[REDUCE_MOTION] ?: false,
                 mode = prefs[MODE].toUiMode() ?: if (prefs.asMap().isEmpty()) UiMode.SIMPLE else UiMode.ADVANCED,
+                theme = prefs[THEME].toUiTheme() ?: UiTheme.AURORA,
             )
         }
 
@@ -45,11 +46,18 @@ class UiPreferencesRepository(
         store.edit { prefs -> prefs[MODE] = mode.name }
     }
 
+    suspend fun setTheme(theme: UiTheme) {
+        store.edit { prefs -> prefs[THEME] = theme.name }
+    }
+
     private fun String?.toUiMode(): UiMode? = this?.let { value -> UiMode.entries.firstOrNull { it.name == value } }
+
+    private fun String?.toUiTheme(): UiTheme? = this?.let { value -> UiTheme.entries.firstOrNull { it.name == value } }
 
     private companion object {
         val HIGH_CONTRAST = booleanPreferencesKey("high_contrast")
         val REDUCE_MOTION = booleanPreferencesKey("reduce_motion")
         val MODE = stringPreferencesKey("mode")
+        val THEME = stringPreferencesKey("theme_preset")
     }
 }

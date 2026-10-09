@@ -27,7 +27,15 @@ import org.robolectric.RobolectricTestRunner
 class ChartBandColorTest {
     @Test
     fun branded_schemes_keep_a_visible_band() {
-        listOf(HALightColors, HADarkColors, HAAmoledColors, HAHighContrastLight, HAHighContrastDark).forEach(::assertBandVisible)
+        listOf(
+            HALightColors,
+            HADarkColors,
+            HAAmoledColors,
+            HAHighContrastLight,
+            HAHighContrastDark,
+            io.healthassistant.android.ui.theme.AuroraLightColors,
+            io.healthassistant.android.ui.theme.AuroraDarkColors,
+        ).forEach(::assertBandVisible)
     }
 
     @Test

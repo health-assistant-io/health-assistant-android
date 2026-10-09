@@ -74,7 +74,6 @@ class HomeScreenTest {
             HomeScreen(
                 monitor = monitor(),
                 readings = listOf(heartRateReading()),
-                connectionLabel = null,
                 reachability = ServerReachability.Online,
                 onSyncNow = {},
             )
@@ -91,7 +90,6 @@ class HomeScreenTest {
             HomeScreen(
                 monitor = monitor(),
                 readings = emptyList(),
-                connectionLabel = null,
                 reachability = ServerReachability.Online,
                 onSyncNow = {},
             )
@@ -108,7 +106,6 @@ class HomeScreenTest {
             HomeScreen(
                 monitor = monitor(),
                 readings = listOf(heartRateReading(), glucoseReading()),
-                connectionLabel = null,
                 reachability = ServerReachability.Online,
                 onSyncNow = {},
             )
@@ -125,7 +122,6 @@ class HomeScreenTest {
             HomeScreen(
                 monitor = monitor(),
                 readings = emptyList(),
-                connectionLabel = null,
                 reachability = ServerReachability.Online,
                 onSyncNow = {},
             )
@@ -140,7 +136,6 @@ class HomeScreenTest {
             HomeScreen(
                 monitor = monitor(),
                 readings = emptyList(),
-                connectionLabel = null,
                 reachability = ServerReachability.NoInternet,
                 onSyncNow = {},
             )
@@ -150,15 +145,15 @@ class HomeScreenTest {
     }
 
     @Test
-    fun sync_status_prefers_the_cache_last_updated_label() {
+    fun status_menu_prefers_the_cache_last_updated_label() {
         // M9 pull-to-refresh polish: "Updated X ago" comes from the
         // observations cache meta (the StaleChip source), not the push-sync
-        // monitor, so it advances on every pull refresh.
+        // monitor, so it advances on every pull refresh. Since the v1.3
+        // header rework it lives in the status dropdown's header block.
         composeRule.setContent {
             HomeScreen(
                 monitor = monitor(),
                 readings = emptyList(),
-                connectionLabel = null,
                 reachability = ServerReachability.Online,
                 staleMeta =
                     io.healthassistant.shared.data.cache.CacheMetaState(
@@ -171,6 +166,7 @@ class HomeScreenTest {
             )
         }
 
+        composeRule.onNodeWithContentDescription("Status and dashboard options").performClick()
         composeRule.onNodeWithText("Updated 2 min ago").assertIsDisplayed()
     }
 
@@ -180,7 +176,6 @@ class HomeScreenTest {
             HomeScreen(
                 monitor = monitor(dead = 2),
                 readings = emptyList(),
-                connectionLabel = null,
                 reachability = ServerReachability.Online,
                 onSyncNow = {},
                 onOpenSync = {},
@@ -199,7 +194,6 @@ class HomeScreenTest {
                 HomeScreen(
                     monitor = monitor(synced = 3),
                     readings = listOf(heartRateReading(), glucoseReading()),
-                    connectionLabel = "https://health.example",
                     reachability = ServerReachability.Online,
                     onSyncNow = {},
                 )
@@ -217,7 +211,6 @@ class HomeScreenTest {
             HomeScreen(
                 monitor = monitor(),
                 readings = listOf(heartRateReading(), glucoseReading()),
-                connectionLabel = null,
                 reachability = ServerReachability.Online,
                 viewStyle = HomeViewStyle.SIMPLE,
                 onSyncNow = {},
@@ -230,13 +223,12 @@ class HomeScreenTest {
     }
 
     @Test
-    fun view_style_menu_reports_change() {
+    fun status_menu_layout_section_reports_change() {
         var chosen: HomeViewStyle? = null
         composeRule.setContent {
             HomeScreen(
                 monitor = monitor(),
                 readings = listOf(heartRateReading()),
-                connectionLabel = null,
                 reachability = ServerReachability.Online,
                 viewStyle = HomeViewStyle.GRID,
                 onCycleViewStyle = { chosen = it },
@@ -244,46 +236,46 @@ class HomeScreenTest {
             )
         }
 
-        composeRule.onNodeWithContentDescription("Dashboard view").performClick()
+        composeRule.onNodeWithContentDescription("Status and dashboard options").performClick()
+        composeRule.onNodeWithText("Layout").assertExists()
         composeRule.onNodeWithText("List").performClick()
 
         assertEquals(HomeViewStyle.LIST, chosen)
     }
 
     @Test
-    fun edit_button_opens_dashboard_editor() {
+    fun status_menu_edit_item_opens_dashboard_editor() {
         var editOpen = false
         composeRule.setContent {
             HomeScreen(
                 monitor = monitor(),
                 readings = listOf(heartRateReading()),
-                connectionLabel = null,
                 reachability = ServerReachability.Online,
                 onOpenEdit = { editOpen = true },
                 onSyncNow = {},
             )
         }
 
-        composeRule.onNodeWithContentDescription("Edit dashboard").performClick()
+        composeRule.onNodeWithContentDescription("Status and dashboard options").performClick()
+        composeRule.onNodeWithText("Edit dashboard").performClick()
 
         assertEquals(true, editOpen)
     }
 
     @Test
-    fun assistant_card_renders_and_fires_hand_off() {
+    fun ai_button_renders_and_fires_hand_off() {
         var opened = false
         composeRule.setContent {
             HomeScreen(
                 monitor = monitor(),
                 readings = emptyList(),
-                connectionLabel = null,
                 reachability = ServerReachability.Online,
                 onSyncNow = {},
                 onOpenAssistant = { opened = true },
             )
         }
 
-        composeRule.onNodeWithText("Ask the assistant").performClick()
+        composeRule.onNodeWithContentDescription("Ask the assistant").performClick()
 
         assertEquals(true, opened)
     }
@@ -294,7 +286,6 @@ class HomeScreenTest {
             HomeScreen(
                 monitor = monitor(),
                 readings = emptyList(),
-                connectionLabel = null,
                 reachability = ServerReachability.Online,
                 onSyncNow = {},
             )
@@ -311,7 +302,6 @@ class HomeScreenTest {
             HomeScreen(
                 monitor = monitor(),
                 readings = listOf(heartRateReading()),
-                connectionLabel = null,
                 reachability = ServerReachability.Online,
                 medications =
                     listOf(

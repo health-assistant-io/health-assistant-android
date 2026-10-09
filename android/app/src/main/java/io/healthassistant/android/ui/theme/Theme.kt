@@ -122,14 +122,101 @@ val LocalReduceMotion = staticCompositionLocalOf { false }
 val LocalHighContrast = compositionLocalOf { false }
 val LocalDarkTheme = compositionLocalOf { false }
 
-/** Theme entry point. Honors dark mode, dynamic color (opt-in), AMOLED,
- *  high-contrast, and reduce-motion. [reduceMotion] lets the user force the
- *  reduce-motion value (Profile › Accessibility); null falls back to the OS
- *  Developer-Options setting. */
+/** Named color presets (Appearance, Profile). [AURORA] is the default since
+ *  v1.3 — one periwinkle-indigo family; [TEAL] is the original clinical
+ *  teal/coral scheme; [MATERIAL_YOU] follows the wallpaper on Android 12+
+ *  (falls back to Aurora below 12). */
+enum class ThemePreset {
+    AURORA,
+    TEAL,
+    MATERIAL_YOU,
+}
+
+/** The schemes per preset; amoled/high-contrast derive from the selected
+ *  base so every preset supports the accessibility variants. */
+private object ThemeSchemes {
+    fun light(preset: ThemePreset): ColorScheme =
+        when (preset) {
+            ThemePreset.TEAL -> HALightColors
+            else -> AuroraLightColors
+        }
+
+    fun dark(preset: ThemePreset): ColorScheme =
+        when (preset) {
+            ThemePreset.TEAL -> HADarkColors
+            else -> AuroraDarkColors
+        }
+}
+
+val AuroraLightColors: ColorScheme =
+    lightColorScheme(
+        primary = AuroraPrimaryLight,
+        onPrimary = Color.White,
+        primaryContainer = AuroraPrimaryContainerLight,
+        onPrimaryContainer = AuroraOnPrimaryContainerLight,
+        secondary = AuroraSecondaryLight,
+        onSecondary = Color.White,
+        secondaryContainer = AuroraSecondaryContainerLight,
+        onSecondaryContainer = AuroraOnSecondaryContainerLight,
+        tertiary = AuroraTertiaryLight,
+        onTertiary = Color.White,
+        tertiaryContainer = AuroraTertiaryContainerLight,
+        onTertiaryContainer = AuroraOnTertiaryContainerLight,
+        error = Red40,
+        onError = Color.White,
+        errorContainer = Red90,
+        onErrorContainer = Color(0xFF410E0B),
+        background = AuroraSurfaceLight,
+        onBackground = AuroraOnSurfaceLight,
+        surface = AuroraSurfaceLight,
+        onSurface = AuroraOnSurfaceLight,
+        surfaceVariant = AuroraSurfaceVariantLight,
+        onSurfaceVariant = AuroraOnSurfaceVariantLight,
+        outline = AuroraOutlineLight,
+        outlineVariant = AuroraOutlineVariantLight,
+        surfaceTint = AuroraPrimaryLight,
+        scrim = Color.Black,
+    )
+
+val AuroraDarkColors: ColorScheme =
+    darkColorScheme(
+        primary = AuroraPrimaryDark,
+        onPrimary = AuroraOnPrimaryDark,
+        primaryContainer = AuroraPrimaryContainerDark,
+        onPrimaryContainer = AuroraOnPrimaryContainerDark,
+        secondary = AuroraSecondaryDark,
+        onSecondary = Color(0xFF1A1B23),
+        secondaryContainer = AuroraSecondaryContainerDark,
+        onSecondaryContainer = AuroraOnSecondaryContainerDark,
+        tertiary = AuroraTertiaryDark,
+        onTertiary = Color(0xFF3E1D68),
+        tertiaryContainer = AuroraTertiaryContainerDark,
+        onTertiaryContainer = AuroraOnTertiaryContainerDark,
+        error = Red80,
+        onError = Color(0xFF690005),
+        errorContainer = Red40,
+        onErrorContainer = Red90,
+        background = AuroraSurfaceDark,
+        onBackground = AuroraOnSurfaceDark,
+        surface = AuroraSurfaceDark,
+        onSurface = AuroraOnSurfaceDark,
+        surfaceVariant = AuroraSurfaceVariantDark,
+        onSurfaceVariant = AuroraOnSurfaceVariantDark,
+        outline = AuroraOutlineDark,
+        outlineVariant = AuroraOutlineVariantDark,
+        surfaceTint = AuroraPrimaryDark,
+        scrim = Color.Black,
+    )
+
+/** Theme entry point. Honors dark mode, the color preset (Appearance,
+ *  Profile), dynamic color via the [ThemePreset.MATERIAL_YOU] preset,
+ *  AMOLED, high-contrast, and reduce-motion. [reduceMotion] lets the user
+ *  force the reduce-motion value (Profile › Accessibility); null falls back
+ *  to the OS Developer-Options setting. */
 @Composable
 fun HATheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = false,
+    preset: ThemePreset = ThemePreset.AURORA,
     amoled: Boolean = false,
     highContrast: Boolean = false,
     reduceMotion: Boolean? = null,
@@ -139,15 +226,39 @@ fun HATheme(
     val systemReduceMotion = remember { context.reduceMotion() }
     val effectiveReduceMotion = reduceMotion ?: systemReduceMotion
 
+    val base =
+        if (darkTheme) {
+            ThemeSchemes.dark(preset)
+        } else {
+            ThemeSchemes.light(preset)
+        }
     val colorScheme =
         when {
-            highContrast && darkTheme -> HAHighContrastDark
-            highContrast -> HAHighContrastLight
-            dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
+            preset == ThemePreset.MATERIAL_YOU && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
                 if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-            amoled && darkTheme -> HAAmoledColors
-            darkTheme -> HADarkColors
-            else -> HALightColors
+            highContrast && darkTheme ->
+                base.copy(
+                    background = Color.Black,
+                    surface = Color.Black,
+                    onSurface = Color.White,
+                    onBackground = Color.White,
+                    outline = Color(0xFFE6E6E6),
+                    onSurfaceVariant = Color(0xFFE6E6E6),
+                )
+            highContrast ->
+                base.copy(
+                    onSurface = Color.Black,
+                    onBackground = Color.Black,
+                    outline = Color(0xFF333333),
+                    onSurfaceVariant = Color(0xFF222222),
+                )
+            amoled && darkTheme ->
+                base.copy(
+                    background = Color.Black,
+                    surface = Color.Black,
+                    surfaceVariant = Color(0xFF101014),
+                )
+            else -> base
         }
 
     CompositionLocalProvider(

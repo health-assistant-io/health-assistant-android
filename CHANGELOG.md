@@ -8,6 +8,14 @@ tagged `vX.Y.Z` via `scripts/version_manager.py`.
 
 ### Added
 
+- **Appearance presets (Profile › Appearance)** — three color themes: **Aurora** (new default — one periwinkle-indigo family, cool neutral surfaces), **Classic teal** (the original scheme), and **Material You** (wallpaper colors on Android 12+). AMOLED and high-contrast layer on top of any preset; a tap applies instantly.
+
+### Changed
+
+- **Home header rework** — the server URL is gone from the header (it lives in Profile), the "Ask the assistant" card became a compact **AI button** in the header, and a new **status dropdown** (next to the AI button) gathers the sync status ("Up to date · Updated X ago" / syncing / offline / needs attention), a Sync-now action, **Edit dashboard**, the **Layout style** picker (Grid/List/Simple), and connection switching — replacing the separate status row, view-style menu, and edit button.
+
+### Added
+
 - **Open-source readiness**: `LICENSE` (Apache-2.0 — the README always claimed it; the file now exists), `CODE_OF_CONDUCT.md`, `SECURITY.md`, `SUPPORT.md`, issue templates + PR checklist, Dependabot (gradle + actions, toolchain pins excluded), and `.gitleaks.toml` (full-history scan clean on CI's gitleaks 8.30.1; the two hits are committed onboarding test fixtures, allowlisted with rationale).
 - **GitHub Actions**: `ci.yml` (full gate — build + composite suites; clones the public core repo for the bridge-SDK composite build), `release.yml` (v* tag → tag/version guard → signed-when-configured release APK attached with a stable-name alias), `gitleaks.yml` (push/PR/weekly, full history).
 - CI-configurable signing: release builds sign with `-Pkeystore*` project properties when present (repo secrets in CI), falling back to debug signing; the SDK composite path is overridable via `HA_KOTLIN_SDK_DIR`.

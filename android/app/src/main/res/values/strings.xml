@@ -530,4 +530,18 @@
     <string name="widget_hr_description">Current heart rate with the last hour as a sparkline.</string>
     <string name="chart_a11y_summary">%1$s over %2$s, ranging from %3$s to %4$s, currently %5$s</string>
     <string name="overview_a11y_summary">Chart of %1$s over %2$s</string>
+    <string name="theme_material_you_hint">Follow your wallpaper\'s colors (Android 12+)</string>
+    <string name="home_menu_open_desc">Status and dashboard options</string>
+    <string name="home_syncing_short">Syncing…</string>
+    <string name="home_syncing_title">Syncing your data</string>
+    <string name="home_offline_short">Offline</string>
+    <string name="home_sync_now">Sync now</string>
+    <string name="home_layout_section">Layout</string>
+    <string name="home_switch_connection">Switch connection</string>
+    <string name="appearance_title">Appearance</string>
+    <string name="theme_aurora">Aurora</string>
+    <string name="theme_aurora_hint">Modern periwinkle-indigo — the default look</string>
+    <string name="theme_teal">Classic teal</string>
+    <string name="theme_teal_hint">The original calm clinical teal</string>
+    <string name="theme_material_you">Material You</string>
 </resources>

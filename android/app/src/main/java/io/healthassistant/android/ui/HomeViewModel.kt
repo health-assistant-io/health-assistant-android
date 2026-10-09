@@ -53,7 +53,6 @@ data class HomeUiState(
     val order: List<String> = emptyList(),
     val editOpen: Boolean = false,
     val reachability: ServerReachability = ServerReachability.Online,
-    val connectionLabel: String? = null,
     // Phase H — active allergies for the Home safety card (H.3).
     val allergies: List<Allergy> = emptyList(),
     // Today merge — the daily check-in sections (meds / exams / inbox).
@@ -92,7 +91,6 @@ class HomeViewModel(
     private val notificationRepo: NotificationRepository,
     private val pullSync: PullSyncRepository,
     private val reachabilityMonitor: ServerReachabilityMonitor,
-    private val connectionLabel: String?,
 ) : ViewModel() {
     private val refreshKey = MutableStateFlow(0)
     private val editOpen = MutableStateFlow(false)
@@ -171,7 +169,6 @@ class HomeViewModel(
                 order = order,
                 editOpen = editing,
                 reachability = reachability,
-                connectionLabel = connectionLabel,
                 allergies = allergies,
                 medications = medications.filter { it.status?.uppercase() == "ACTIVE" },
                 recentExams = exams.take(3),
@@ -185,7 +182,6 @@ class HomeViewModel(
                 HomeUiState(
                     loading = true,
                     reachability = reachabilityMonitor.state.value,
-                    connectionLabel = connectionLabel,
                 ),
         )
 
@@ -296,7 +292,6 @@ class HomeViewModel(
             notificationRepo: NotificationRepository,
             pullSync: PullSyncRepository,
             reachabilityMonitor: ServerReachabilityMonitor,
-            connectionLabel: String?,
         ) = viewModelFactory {
             initializer {
                 HomeViewModel(
@@ -310,7 +305,6 @@ class HomeViewModel(
                     notificationRepo,
                     pullSync,
                     reachabilityMonitor,
-                    connectionLabel,
                 )
             }
         }

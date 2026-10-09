@@ -1,8 +1,10 @@
 package io.healthassistant.android.ui
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -16,30 +18,30 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.CalendarMonth
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.CloudDone
-import androidx.compose.material.icons.outlined.Dashboard
+import androidx.compose.material.icons.outlined.CloudOff
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.ErrorOutline
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.Medication
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.SwapHoriz
 import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material.icons.outlined.Warning
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -48,6 +50,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -85,7 +88,6 @@ fun effectiveHomeViewStyle(
 fun HomeScreen(
     monitor: SyncMonitor,
     readings: List<BiomarkerReading>,
-    connectionLabel: String?,
     reachability: ServerReachability,
     staleMeta: io.healthassistant.shared.data.cache.CacheMetaState? = null,
     online: Boolean = true,
@@ -120,16 +122,16 @@ fun HomeScreen(
                 .padding(16.dp),
         ) {
             HomeHeader(
-                connectionLabel = connectionLabel,
+                monitor = monitor,
+                reachability = reachability,
+                staleMeta = staleMeta,
                 onSwitchConnection = onSwitchConnection,
                 viewStyle = viewStyle,
                 onCycleViewStyle = onCycleViewStyle,
                 onOpenEdit = onOpenEdit,
+                onOpenAssistant = onOpenAssistant,
+                onSyncNow = onSyncNow,
             )
-            // Offline-first M8 — the saved-data banner replaces the plain
-            // offline banner whenever there is a cached snapshot behind it
-            // ("Showing saved data · offline" / "Couldn't refresh — tap to
-            // retry"). An empty cache offline keeps the plain banner.
             val hasSavedData = staleMeta != null && (staleMeta.rowCount > 0 || staleMeta.lastSuccessAtEpochMs > 0L)
             if (reachability != ServerReachability.Online) {
                 Spacer(Modifier.height(12.dp))
@@ -141,17 +143,6 @@ fun HomeScreen(
             } else if (staleMeta?.lastError != null) {
                 Spacer(Modifier.height(12.dp))
                 SavedDataBanner(meta = staleMeta, online = online, onRetry = onSyncNow)
-            }
-            Spacer(Modifier.height(12.dp))
-            SyncStatusRow(
-                monitor = monitor,
-                staleMeta = staleMeta,
-                onOpenSync = onOpenSync,
-            )
-
-            if (onOpenAssistant != null) {
-                Spacer(Modifier.height(12.dp))
-                AssistantCard(onOpen = onOpenAssistant)
             }
 
             // Phase H (H.3) — safety-critical: the patient's active allergies are
@@ -232,13 +223,31 @@ fun HomeScreen(
     }
 }
 
+/** Pure status derivation for the header status chip (JVM-testable). */
+internal enum class HomeStatus { SYNCING, UP_TO_DATE, NEEDS_ATTENTION, OFFLINE }
+
+internal fun homeStatus(
+    monitor: SyncMonitor,
+    reachability: ServerReachability,
+): HomeStatus =
+    when {
+        monitor.progress?.active == true -> HomeStatus.SYNCING
+        reachability != ServerReachability.Online -> HomeStatus.OFFLINE
+        monitor.outboxDeadLettered > 0 -> HomeStatus.NEEDS_ATTENTION
+        else -> HomeStatus.UP_TO_DATE
+    }
+
 @Composable
 private fun HomeHeader(
-    connectionLabel: String?,
+    monitor: SyncMonitor,
+    reachability: ServerReachability,
+    staleMeta: io.healthassistant.shared.data.cache.CacheMetaState?,
     onSwitchConnection: (() -> Unit)?,
     viewStyle: HomeViewStyle,
     onCycleViewStyle: ((HomeViewStyle) -> Unit)?,
     onOpenEdit: (() -> Unit)?,
+    onOpenAssistant: (() -> Unit)?,
+    onSyncNow: () -> Unit,
 ) {
     Row(
         Modifier.fillMaxWidth(),
@@ -250,36 +259,152 @@ private fun HomeHeader(
             modifier = Modifier.size(44.dp),
         )
         Spacer(Modifier.width(12.dp))
-        Column(Modifier.weight(1f)) {
-            Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineSmall)
-            connectionLabel?.let {
-                Text(
-                    it,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline,
-                    maxLines = 1,
+        Text(
+            stringResource(R.string.app_name),
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.weight(1f),
+        )
+        if (onOpenAssistant != null) {
+            FilledTonalIconButton(onClick = onOpenAssistant) {
+                Icon(
+                    Icons.Outlined.AutoAwesome,
+                    contentDescription = stringResource(R.string.home_ask_assistant),
                 )
             }
+            Spacer(Modifier.width(8.dp))
         }
-        if (onSwitchConnection != null) {
-            SuggestionChip(
-                onClick = onSwitchConnection,
-                label = { Text(stringResource(R.string.dashboard_switch)) },
-            )
-        }
-        if (onCycleViewStyle != null) {
-            Spacer(Modifier.width(4.dp))
-            ViewStyleMenu(
-                current = viewStyle,
-                onChange = onCycleViewStyle,
-            )
-        }
-        if (onOpenEdit != null) {
-            IconButton(onClick = onOpenEdit) {
+        StatusMenuButton(
+            monitor = monitor,
+            reachability = reachability,
+            staleMeta = staleMeta,
+            onSwitchConnection = onSwitchConnection,
+            viewStyle = viewStyle,
+            onCycleViewStyle = onCycleViewStyle,
+            onOpenEdit = onOpenEdit,
+            onSyncNow = onSyncNow,
+        )
+    }
+}
+
+/** The header status chip + its dropdown: the "what's the state of my data"
+ *  surface (status, last refresh, sync now) and the dashboard controls
+ *  (edit + layout style) as one modern, explorable menu. */
+@Composable
+private fun StatusMenuButton(
+    monitor: SyncMonitor,
+    reachability: ServerReachability,
+    staleMeta: io.healthassistant.shared.data.cache.CacheMetaState?,
+    onSwitchConnection: (() -> Unit)?,
+    viewStyle: HomeViewStyle,
+    onCycleViewStyle: ((HomeViewStyle) -> Unit)?,
+    onOpenEdit: (() -> Unit)?,
+    onSyncNow: () -> Unit,
+) {
+    var menuOpen by remember { mutableStateOf(false) }
+    val status = homeStatus(monitor, reachability)
+    val syncing = status == HomeStatus.SYNCING
+    Box {
+        AssistChip(
+            onClick = { menuOpen = true },
+            label = {
+                if (syncing) {
+                    Text(stringResource(R.string.home_syncing, ((monitor.progress?.fraction ?: 0f) * 100).toInt()))
+                } else {
+                    Text(statusShortLabel(status))
+                }
+            },
+            leadingIcon = {
+                val dotColor = statusColor(status)
+                Box(Modifier.size(10.dp), contentAlignment = Alignment.Center) {
+                    Canvas(Modifier.size(10.dp)) {
+                        drawCircle(dotColor)
+                    }
+                }
+            },
+            trailingIcon = {
                 Icon(
-                    Icons.Outlined.Edit,
-                    contentDescription = stringResource(R.string.home_edit_dashboard),
-                    tint = MaterialTheme.colorScheme.primary,
+                    Icons.Outlined.KeyboardArrowDown,
+                    contentDescription = stringResource(R.string.home_menu_open_desc),
+                )
+            },
+        )
+        DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+            DropdownMenuItem(
+                text = {
+                    Column {
+                        Text(
+                            statusTitle(status),
+                            style = MaterialTheme.typography.titleSmall,
+                        )
+                        statusSupporting(monitor, staleMeta, status)?.let {
+                            Text(
+                                it,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                },
+                onClick = {},
+                enabled = false,
+                leadingIcon = { Icon(statusIcon(status), contentDescription = null, tint = statusColor(status)) },
+            )
+            HorizontalDivider()
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.home_sync_now)) },
+                leadingIcon = { Icon(Icons.Outlined.Sync, contentDescription = null) },
+                onClick = {
+                    menuOpen = false
+                    onSyncNow()
+                },
+            )
+            if (onOpenEdit != null) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.home_edit_dashboard)) },
+                    leadingIcon = { Icon(Icons.Outlined.Edit, contentDescription = null) },
+                    onClick = {
+                        menuOpen = false
+                        onOpenEdit()
+                    },
+                )
+            }
+            if (onCycleViewStyle != null) {
+                HorizontalDivider()
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            stringResource(R.string.home_layout_section),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    },
+                    onClick = {},
+                    enabled = false,
+                )
+                HomeViewStyle.entries.forEach { style ->
+                    DropdownMenuItem(
+                        text = { Text(viewStyleLabel(style)) },
+                        trailingIcon = {
+                            if (style == viewStyle) {
+                                Icon(Icons.Outlined.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                            }
+                        },
+                        onClick = {
+                            menuOpen = false
+                            onCycleViewStyle(style)
+                        },
+                    )
+                }
+            }
+            if (onSwitchConnection != null) {
+                HorizontalDivider()
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.home_switch_connection)) },
+                    leadingIcon = { Icon(Icons.Outlined.SwapHoriz, contentDescription = null) },
+                    onClick = {
+                        menuOpen = false
+                        onSwitchConnection()
+                    },
                 )
             }
         }
@@ -287,30 +412,50 @@ private fun HomeHeader(
 }
 
 @Composable
-private fun ViewStyleMenu(
-    current: HomeViewStyle,
-    onChange: (HomeViewStyle) -> Unit,
-) {
-    var menuOpen by remember { mutableStateOf(false) }
-    IconButton(onClick = { menuOpen = true }) {
-        Icon(
-            Icons.Outlined.Dashboard,
-            contentDescription = stringResource(R.string.home_view_style),
-            tint = MaterialTheme.colorScheme.primary,
-        )
+private fun statusShortLabel(status: HomeStatus): String =
+    when (status) {
+        HomeStatus.SYNCING -> stringResource(R.string.home_syncing_short)
+        HomeStatus.UP_TO_DATE -> stringResource(R.string.home_up_to_date)
+        HomeStatus.NEEDS_ATTENTION -> stringResource(R.string.home_couldnt_sync)
+        HomeStatus.OFFLINE -> stringResource(R.string.home_offline_short)
     }
-    DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
-        HomeViewStyle.entries.forEach { style ->
-            DropdownMenuItem(
-                text = { Text(viewStyleLabel(style)) },
-                onClick = {
-                    menuOpen = false
-                    onChange(style)
-                },
-            )
-        }
+
+@Composable
+private fun statusTitle(status: HomeStatus): String =
+    when (status) {
+        HomeStatus.SYNCING -> stringResource(R.string.home_syncing_title)
+        HomeStatus.UP_TO_DATE -> stringResource(R.string.home_up_to_date)
+        HomeStatus.NEEDS_ATTENTION -> stringResource(R.string.home_couldnt_sync)
+        HomeStatus.OFFLINE -> stringResource(R.string.home_offline_short)
     }
-}
+
+@Composable
+private fun statusSupporting(
+    monitor: SyncMonitor,
+    staleMeta: io.healthassistant.shared.data.cache.CacheMetaState?,
+    status: HomeStatus,
+): String? =
+    when (status) {
+        HomeStatus.NEEDS_ATTENTION -> stringResource(R.string.home_tap_to_review)
+        else -> cacheUpdatedLabel(staleMeta) ?: lastSyncLabel(monitor)
+    }
+
+@Composable
+private fun statusColor(status: HomeStatus): Color =
+    when (status) {
+        HomeStatus.SYNCING -> MaterialTheme.colorScheme.primary
+        HomeStatus.UP_TO_DATE -> io.healthassistant.android.ui.theme.HAHealthColors.good
+        HomeStatus.NEEDS_ATTENTION -> MaterialTheme.colorScheme.error
+        HomeStatus.OFFLINE -> MaterialTheme.colorScheme.outline
+    }
+
+private fun statusIcon(status: HomeStatus) =
+    when (status) {
+        HomeStatus.SYNCING -> Icons.Outlined.Sync
+        HomeStatus.UP_TO_DATE -> Icons.Outlined.CloudDone
+        HomeStatus.NEEDS_ATTENTION -> Icons.Outlined.ErrorOutline
+        HomeStatus.OFFLINE -> Icons.Outlined.CloudOff
+    }
 
 @Composable
 fun viewStyleLabel(style: HomeViewStyle): String =
@@ -322,47 +467,8 @@ fun viewStyleLabel(style: HomeViewStyle): String =
 
 /** Entry point into the web app's AI assistant (`/ai-assistant`) — the full
  *  chat (tools, citations, HITL proposal cards) lives on the PWA side; the
- *  native app hands off to it in a Custom Tab. */
-@Composable
-private fun AssistantCard(onOpen: () -> Unit) {
-    Card(
-        onClick = onOpen,
-        modifier = Modifier.fillMaxWidth(),
-        colors =
-            androidx.compose.material3.CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-            ),
-    ) {
-        Row(
-            Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                Icons.Outlined.AutoAwesome,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-            )
-            Spacer(Modifier.width(12.dp))
-            Column(Modifier.weight(1f)) {
-                Text(
-                    stringResource(R.string.home_ask_assistant),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
-                Text(
-                    stringResource(R.string.home_ask_assistant_subtitle),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
-            }
-            Icon(
-                Icons.AutoMirrored.Outlined.OpenInNew,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-            )
-        }
-    }
-}
+ *  native app hands off to it in a Custom Tab. (Since the v1.3 header
+ *  rework this is the header's AI button, not a card.) */
 
 @Composable
 private fun OfflineBanner(reachability: ServerReachability) {
@@ -391,70 +497,6 @@ private fun OfflineBanner(reachability: ServerReachability) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onErrorContainer,
             )
-        }
-    }
-}
-
-@Composable
-private fun SyncStatusRow(
-    monitor: SyncMonitor,
-    staleMeta: io.healthassistant.shared.data.cache.CacheMetaState?,
-    onOpenSync: (() -> Unit)?,
-) {
-    val progress = monitor.progress
-    val hasErrors = monitor.outboxDeadLettered > 0
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors =
-            androidx.compose.material3.CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            ),
-    ) {
-        Row(
-            Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            if (progress?.active == true) {
-                Icon(Icons.Outlined.Sync, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                Spacer(Modifier.width(12.dp))
-                Column(Modifier.weight(1f)) {
-                    Text(
-                        stringResource(R.string.home_syncing, (progress.fraction * 100).toInt()),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                    Spacer(Modifier.height(6.dp))
-                    LinearProgressIndicator(
-                        progress = { progress.fraction },
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
-            } else {
-                val statusIcon =
-                    if (hasErrors) Icons.Outlined.ErrorOutline else Icons.Outlined.CloudDone
-                val title =
-                    if (hasErrors) stringResource(R.string.home_couldnt_sync) else stringResource(R.string.home_up_to_date)
-                val tint =
-                    if (hasErrors) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
-                val sub =
-                    if (hasErrors) {
-                        stringResource(R.string.home_tap_to_review)
-                    } else {
-                        cacheUpdatedLabel(staleMeta) ?: lastSyncLabel(monitor)
-                    }
-                Icon(statusIcon, contentDescription = null, tint = tint)
-                Spacer(Modifier.width(12.dp))
-                Column(Modifier.weight(1f)) {
-                    Text(title, style = MaterialTheme.typography.bodyMedium)
-                    if (sub != null) {
-                        Text(sub, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
-                    }
-                }
-                if (hasErrors && onOpenSync != null) {
-                    TextButton(onClick = onOpenSync) {
-                        Text(stringResource(R.string.home_tap_to_review))
-                    }
-                }
-            }
         }
     }
 }

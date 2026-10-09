@@ -77,6 +77,31 @@ class UiPreferencesRepositoryTest {
         }
 
     @Test
+    fun theme_defaults_to_aurora_and_round_trips() =
+        runBlocking {
+            val repo = repository()
+
+            assertEquals(UiTheme.AURORA, repo.uiPreferences.first().theme)
+
+            repo.setTheme(UiTheme.MATERIAL_YOU)
+            assertEquals(UiTheme.MATERIAL_YOU, repo.uiPreferences.first().theme)
+
+            repo.setTheme(UiTheme.TEAL)
+            assertEquals(UiTheme.TEAL, repo.uiPreferences.first().theme)
+        }
+
+    @Test
+    fun unknown_stored_theme_value_falls_back_to_aurora() =
+        runBlocking {
+            val store =
+                PreferenceDataStoreFactory.create(produceFile = { File(tmpFolder.newFolder(), "ui_prefs_test.preferences_pb") })
+            store.edit { it[stringPreferencesKey("theme_preset")] = "coral" }
+            val repo = UiPreferencesRepository(ApplicationProvider.getApplicationContext<Context>(), store)
+
+            assertEquals(UiTheme.AURORA, repo.uiPreferences.first().theme)
+        }
+
+    @Test
     fun setting_a_mode_preserves_the_other_prefs() =
         runBlocking {
             val repo = repository()

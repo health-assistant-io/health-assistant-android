@@ -49,7 +49,6 @@ import org.koin.compose.koinInject
 fun HomeRoute(
     client: BridgeClient,
     repository: SyncMonitorRepository,
-    connectionLabel: String?,
     onSyncNow: () -> Unit,
     onSwitchConnection: (() -> Unit)?,
     onOpenSync: () -> Unit,
@@ -104,7 +103,6 @@ fun HomeRoute(
                     notificationRepo,
                     pullSync,
                     reachabilityMonitor,
-                    connectionLabel,
                 ),
         )
     val state by vm.state.collectAsStateWithLifecycle()
@@ -129,7 +127,6 @@ fun HomeRoute(
     HomeScreen(
         monitor = state.monitor,
         readings = state.readings,
-        connectionLabel = state.connectionLabel,
         reachability = state.reachability,
         staleMeta = staleMeta,
         online = online,
