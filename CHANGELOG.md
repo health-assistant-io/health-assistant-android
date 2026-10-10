@@ -17,8 +17,9 @@ tagged `vX.Y.Z` via `scripts/version_manager.py`.
 
 - **Appearance presets (Profile › Appearance)** — three color themes: **Aurora** (new default — one periwinkle-indigo family, cool neutral surfaces), **Classic teal** (the original scheme), and **Material You** (wallpaper colors on Android 12+). AMOLED and high-contrast layer on top of any preset; a tap applies instantly.
 
-### Changed
+### Fixed
 
+- **Layout switching now applies instantly** (Home status dropdown › Layout) — the layout pick updates the UI synchronously via an optimistic override instead of waiting on the DataStore write round-trip, with a live-collector regression test pinning the repository's reactivity.
 - **Profile redesign** — the gray card containers are gone: settings render as transparent groups with inset hairline dividers between rows (the modern settings-list look), matching the mode + appearance sections and the flattened connection block. The **Simple/Advanced** and **Appearance** selectors are now single compact rows (current value as the subtitle) that open dropdown menus — the fully-expanded mode picker remains in the onboarding wizard.
 - **Home header rework** — the server URL is gone from the header (it lives in Profile), the "Ask the assistant" card became a compact **AI button** in the header, and a new **status dropdown** (next to the AI button) gathers the sync status ("Up to date · Updated X ago" / syncing / offline / needs attention), a Sync-now action, **Edit dashboard**, the **Layout style** picker (Grid/List/Simple), and connection switching — replacing the separate status row, view-style menu, and edit button.
 

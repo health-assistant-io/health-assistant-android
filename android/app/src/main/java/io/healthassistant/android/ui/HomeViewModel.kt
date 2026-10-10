@@ -93,6 +93,11 @@ class HomeViewModel(
     private val reachabilityMonitor: ServerReachabilityMonitor,
 ) : ViewModel() {
     private val refreshKey = MutableStateFlow(0)
+
+    /** Optimistic layout override: set synchronously on a layout-pick so the
+     *  UI updates with zero latency; [dashboardPrefs.viewStyle] stays the
+     *  durable source (null = follow the stored preference). */
+    private val viewStyleOverride = MutableStateFlow<HomeViewStyle?>(null)
     private val editOpen = MutableStateFlow(false)
 
     // The merged local + server snapshot, straight from the cache (reactive).
@@ -113,7 +118,7 @@ class HomeViewModel(
     val state: StateFlow<HomeUiState> =
         combine(
             monitorRepo.monitor,
-            dashboardPrefs.viewStyle,
+            combine(viewStyleOverride, dashboardPrefs.viewStyle) { override, stored -> override ?: stored },
             dashboardPrefs.shownCodes,
             dashboardPrefs.order,
             cachedLatest,
@@ -250,6 +255,7 @@ class HomeViewModel(
     }
 
     fun setViewStyle(style: HomeViewStyle) {
+        viewStyleOverride.value = style
         viewModelScope.launch { dashboardPrefs.setViewStyle(style) }
     }
 
