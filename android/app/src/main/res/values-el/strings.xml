@@ -509,7 +509,23 @@
     <string name="theme_teal_hint">Το αρχικό ήρεμο κλινικό teal</string>
     <string name="theme_material_you">Material You</string>
     <string name="theme_material_you_hint">Ακολουθεί τα χρώματα της ταπετσαρίας σας (Android 12+)</string>
-    <string name="settings_language_title">Γλώσσα</string>    <string name="language_system">Προεπιλογή συστήματος</string>
+    <string name="settings_language_title">Γλώσσα</string>
+    <string name="language_system">Προεπιλογή συστήματος</string>
     <string name="language_english">English</string>
     <string name="language_greek">Ελληνικά</string>
+    <string name="about_tagline">Universal Health Data Platform</string>
+    <string name="about_description_section">Σχετικά</string>
+    <string name="about_description_body">Μια self-hosted εφαρμογή-συνοδός με έμφαση στο απόρρητο που επιστρέφει τα ιατρικά σας δεδομένα στα χέρια σας: οι μετρήσεις σας συγχρονίζονται στον δικό σας διακομιστή, ο φάκελός σας παραμένει αναγνώσιμος εκτός σύνδεσης και οι βιοδείκτες σας εξηγούνται σε απλή γλώσσα.</string>
+    <string name="about_links_section">Επικοινωνία &amp; σύνδεση</string>
+    <string name="about_website">Ιστότοπος</string>
+    <string name="about_github">GitHub</string>
+    <string name="about_copy_email">Πατήστε για αντιγραφή</string>
+    <string name="about_email_copied">Αντιγράφηκε στο πρόχειρο</string>
+    <string name="about_creator_section">Δημιουργός</string>
+    <string name="about_creator_name">Ηλίας Χατζόπουλος</string>
+    <string name="about_creator_role">Ιδρυτής &amp; αρχιτέκτονας</string>
+    <string name="about_tech_section">Χτισμένο με</string>
+    <string name="about_disclaimer_title">Ιατρική αποποίηση ευθύνης</string>
+    <string name="about_disclaimer_body">Αυτό το λογισμικό προορίζεται μόνο για ενημερωτικούς σκοπούς και ευεξία. ΔΕΝ παρέχει ιατρική διάγνωση ούτε υποκαθιστά επαγγελματική ιατρική φροντίδα. Συμβουλευτείτε πάντα πιστοποιημένους ιατρούς για συμβουλές υγείας, διαγνώσεις ή πριν λάβετε ιατρικές αποφάσεις με βά τα αποτελέσματα του λογισμικού.</string>
+    <string name="about_copyright">© 2026 Neuronection</string>
 </resources>

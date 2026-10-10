@@ -549,4 +549,19 @@
     <string name="language_system">System default</string>
     <string name="language_english">English</string>
     <string name="language_greek">Ελληνικά</string>
+    <string name="about_tagline">Universal Health Data Platform</string>
+    <string name="about_description_section">About</string>
+    <string name="about_description_body">A self-hosted, privacy-first companion app that puts your medical data back in your hands: your readings sync to your own server, your records stay readable offline, and your biomarkers are explained in plain language.</string>
+    <string name="about_links_section">Contact &amp; connect</string>
+    <string name="about_website">Website</string>
+    <string name="about_github">GitHub</string>
+    <string name="about_copy_email">Tap to copy</string>
+    <string name="about_email_copied">Copied to clipboard</string>
+    <string name="about_creator_section">Creator</string>
+    <string name="about_creator_name">Ilias Chatzopoulos</string>
+    <string name="about_creator_role">Founder &amp; Lead Architect</string>
+    <string name="about_tech_section">Built with</string>
+    <string name="about_disclaimer_title">Medical disclaimer</string>
+    <string name="about_disclaimer_body">This software is for informational and wellness purposes only. It does NOT provide medical diagnosis or act as a substitute for professional medical care. Always consult certified medical professionals for health advice, diagnoses, or before making any medical decisions based on the software\'s outputs.</string>
+    <string name="about_copyright">© 2026 Neuronection</string>
 </resources>

@@ -4,27 +4,39 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Code
+import androidx.compose.material.icons.outlined.Language
+import androidx.compose.material.icons.outlined.MailOutline
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Science
+import androidx.compose.material.icons.outlined.WarningAmber
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -42,6 +54,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -235,37 +248,245 @@ fun PrivacyRoute(onBack: () -> Unit) {
 
 // --- About -----------------------------------------------------------------
 
-/** Profile › About — version, open-source licenses, docs. */
+/** Profile › About — the family `AboutPanel` pattern (assistant-ui) as a
+ *  native page: identity, description, license, grouped contact links,
+ *  creator, tech chips, the medical disclaimer, and copyright. */
 @Composable
 fun AboutRoute(onBack: () -> Unit) {
     val context = LocalContext.current
     var showLicenses by remember { mutableStateOf(false) }
     val versionName = remember { context.appVersionName() }
-    val docsUrl = stringResource(R.string.profile_about_docs_url)
 
     if (showLicenses) {
         OpenSourceLicensesDialog(onDismiss = { showLicenses = false })
     }
 
     ProfileDetailScaffold(title = stringResource(R.string.profile_about_section), onBack = onBack) {
+        Column(Modifier.fillMaxWidth()) {
+            AboutIdentity(versionName)
+            AboutSectionTitle(stringResource(R.string.about_description_section))
+            Text(
+                stringResource(R.string.about_description_body),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 4.dp),
+            )
+            Spacer(Modifier.height(16.dp))
+
+            AboutSectionTitle(stringResource(R.string.about_links_section))
+            AboutLinkRow(
+                icon = Icons.Outlined.Language,
+                label = stringResource(R.string.about_website),
+                subtitle = ABOUT_WEBSITE_URL.removePrefix("https://"),
+                onClick = { openBrowser(context, ABOUT_WEBSITE_URL) },
+            )
+            AboutLinkRow(
+                icon = Icons.Outlined.Code,
+                label = stringResource(R.string.about_github),
+                subtitle = ABOUT_GITHUB_URL.removePrefix("https://"),
+                onClick = { openBrowser(context, ABOUT_GITHUB_URL) },
+            )
+            AboutLinkRow(
+                icon = Icons.Outlined.MailOutline,
+                label = ABOUT_CONTACT_EMAIL,
+                subtitle = stringResource(R.string.about_copy_email),
+                onClick = { copyToClipboard(context, ABOUT_CONTACT_EMAIL) },
+                showDivider = false,
+            )
+            Spacer(Modifier.height(16.dp))
+
+            AboutSectionTitle(stringResource(R.string.about_creator_section))
+            AboutLinkRow(
+                icon = Icons.Outlined.Person,
+                label = stringResource(R.string.about_creator_name),
+                subtitle = stringResource(R.string.about_creator_role),
+                onClick = { openBrowser(context, ABOUT_CREATOR_GITHUB_URL) },
+                showDivider = false,
+            )
+            Spacer(Modifier.height(16.dp))
+
+            AboutSectionTitle(stringResource(R.string.about_tech_section))
+            TechChips()
+            Spacer(Modifier.height(16.dp))
+
+            DisclaimerNote()
+            Spacer(Modifier.height(16.dp))
+
+            DetailActionRow(
+                icon = Icons.Outlined.Science,
+                label = stringResource(R.string.profile_about_licenses),
+                onClick = { showLicenses = true },
+            )
+            Spacer(Modifier.height(16.dp))
+            Text(
+                stringResource(R.string.about_copyright),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 4.dp),
+            )
+            Spacer(Modifier.height(8.dp))
+        }
+    }
+}
+
+private const val ABOUT_WEBSITE_URL = "https://health-assistant.io"
+private const val ABOUT_GITHUB_URL = "https://github.com/health-assistant-io/health-assistant-android"
+private const val ABOUT_CONTACT_EMAIL = "hello@health-assistant.io"
+private const val ABOUT_CREATOR_GITHUB_URL = "https://github.com/constLiakos"
+
+/** Tech-stack chips — brand names, not translatable copy. */
+private val ABOUT_TECH_ITEMS =
+    listOf(
+        "Kotlin",
+        "Jetpack Compose",
+        "Kotlin Multiplatform",
+        "Room + SQLCipher",
+        "Health Connect",
+        "Ktor",
+        "WorkManager",
+        "Glance",
+        "Vico",
+    )
+
+@Composable
+private fun AboutIdentity(versionName: String) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ha_brand_icon),
+            contentDescription = stringResource(R.string.app_name),
+            modifier = Modifier.size(84.dp),
+        )
+        Spacer(Modifier.size(12.dp))
+        Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineSmall)
+        Text(
+            stringResource(R.string.about_tagline),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(Modifier.size(4.dp))
         Text(
             stringResource(R.string.profile_about_version, versionName),
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        Spacer(Modifier.size(8.dp))
-        DetailActionRow(
-            icon = Icons.Outlined.Science,
-            label = stringResource(R.string.profile_about_licenses),
-            onClick = { showLicenses = true },
-        )
-        DetailActionRow(
-            icon = Icons.Outlined.Info,
-            label = stringResource(R.string.profile_about_docs),
-            onClick = {
-                runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(docsUrl))) }
-            },
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.outline,
         )
     }
+}
+
+@Composable
+private fun AboutSectionTitle(title: String) {
+    Text(
+        title,
+        style = MaterialTheme.typography.titleSmall,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.padding(horizontal = 4.dp, vertical = 6.dp),
+    )
+}
+
+@Composable
+private fun AboutLinkRow(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    subtitle: String,
+    onClick: () -> Unit,
+    showDivider: Boolean = true,
+) {
+    Column {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 4.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                icon,
+                contentDescription = null,
+                modifier = Modifier.size(22.dp),
+                tint = MaterialTheme.colorScheme.primary,
+            )
+            Spacer(Modifier.size(14.dp))
+            Column(Modifier.weight(1f)) {
+                Text(label, style = MaterialTheme.typography.bodyLarge)
+                Text(
+                    subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+        if (showDivider) {
+            HorizontalDivider(Modifier.padding(start = 40.dp), color = MaterialTheme.colorScheme.outlineVariant)
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun TechChips() {
+    FlowRow(
+        Modifier.padding(horizontal = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        ABOUT_TECH_ITEMS.forEach { item ->
+            SuggestionChip(onClick = {}, label = { Text(item) })
+        }
+    }
+}
+
+@Composable
+private fun DisclaimerNote() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors =
+            androidx.compose.material3.CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.errorContainer,
+            ),
+    ) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    Icons.Outlined.WarningAmber,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onErrorContainer,
+                )
+                Spacer(Modifier.size(8.dp))
+                Text(
+                    stringResource(R.string.about_disclaimer_title),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onErrorContainer,
+                )
+            }
+            Text(
+                stringResource(R.string.about_disclaimer_body),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onErrorContainer,
+            )
+        }
+    }
+}
+
+private fun openBrowser(
+    context: Context,
+    url: String,
+) {
+    runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
+}
+
+private fun copyToClipboard(
+    context: Context,
+    text: String,
+) {
+    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+    clipboard.setPrimaryClip(android.content.ClipData.newPlainText(text, text))
+    android.widget.Toast
+        .makeText(context, context.getString(R.string.about_email_copied), android.widget.Toast.LENGTH_SHORT)
+        .show()
 }
 
 private fun Context.appVersionName(): String =
