@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Supported in-app languages (Android 13+ per-app language settings).
+     When adding a locale: create values-<code>/strings.xml (fully
+     translated), add the language tag here, and run the gate. -->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="en" />
+    <locale android:name="el" />
+</locale-config>

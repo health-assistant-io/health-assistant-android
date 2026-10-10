@@ -8,6 +8,10 @@ tagged `vX.Y.Z` via `scripts/version_manager.py`.
 
 ### Added
 
+- **Full Greek translation** — every one of the app's 473 strings now ships in Greek (previously many surfaced as English placeholders). Health Assistant is also wired for **per-app languages** (Android 13+): set its language independently of the phone in Settings → Apps → Health Assistant → Language, and adding a new locale is a documented, gate-enforced process (`docs/dev` + android/AGENTS.md).
+
+### Added
+
 - **Appearance presets (Profile › Appearance)** — three color themes: **Aurora** (new default — one periwinkle-indigo family, cool neutral surfaces), **Classic teal** (the original scheme), and **Material You** (wallpaper colors on Android 12+). AMOLED and high-contrast layer on top of any preset; a tap applies instantly.
 
 ### Changed

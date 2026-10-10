@@ -103,6 +103,12 @@ window), **Data & storage** (Advanced — cached-data sizes, clear actions),
 **Privacy** (app lock: biometric or PIN, 60s grace), Accessibility, and
 About.
 
+## Languages
+
+The app ships in **English and Greek (Ελληνικά)**. On Android 13+ you can
+set the app's language independently of the phone: **Settings → Apps →
+Health Assistant → Language**. Everything updates immediately.
+
 ## Offline behavior
 
 Everything you've opened once keeps working offline — see

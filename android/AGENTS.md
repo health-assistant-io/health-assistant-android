@@ -200,11 +200,26 @@ cd app/android
 ```
 
 **Locale coverage (Phase K):** every string in `values/strings.xml` has a key
-in `values-el/strings.xml` (English placeholders pending translation) — missing
-keys fail `./gradlew build` as `MissingTranslation` lint errors. When adding a
+in `values-el/strings.xml` — missing keys fail `./gradlew build` as
+`MissingTranslation` lint errors. When adding a
 string, add the key to **both** files. Compose screens read resources via
 `stringResource(...)` (hoisted to composable scope), never `LocalContext.current.getString(...)`
 in a lambda — the latter fails lint (`LocalContextGetResourceValueCall`).
+
+### Adding a language
+
+1. Copy `values/strings.xml` to `values-<code>/strings.xml` and translate
+   **every** entry — the gate fails on missing keys, and half-translated
+   locales ship mixed languages to users. Leave brand names (Health
+   Assistant, Health Connect), URLs, and format examples untranslated.
+2. Register the locale in `res/xml/locales_config.xml` (it appears in the
+   Android 13+ per-app language switcher via the manifest's
+   `android:localeConfig`).
+3. Respect the established terminology (βιοδείκτης, μέτρηση, εξέταση,
+   συγχρονισμός — see `values-el` as the reference) and keep all
+   placeholders (`%1$s`, `%1$d`, `%%`) and `\'` escapes intact.
+4. Run the full gate. For UI verification, switch the app's language with
+   `adb shell cmd locale set-app-locales io.healthassistant.android --locales <code>`.
 
 Toolchain: AGP 9.3.1 · Gradle 9.5 · Kotlin 2.3.20 · minSdk 28 · targetSdk 37.
 Release build has R8 ON (keep rules in `proguard-rules.pro`). `buildConfig = true`
