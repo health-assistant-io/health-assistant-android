@@ -431,9 +431,9 @@
     <string name="med_reminder_mark_taken">Mark as taken</string>
     <string name="mode_title">How do you want to use the app?</string>
     <string name="mode_simple">Simple (just the essentials)</string>
-    <string name="mode_simple_hint">Your daily readings, records and connection — big, calm screens.</string>
+    <string name="mode_simple_hint">Just the essentials — large print.</string>
     <string name="mode_advanced">Advanced (all features)</string>
-    <string name="mode_advanced_hint">Everything, including the doctors directory, server notifications and dashboard editing.</string>
+    <string name="mode_advanced_hint">All features, unlocked.</string>
     <string name="biomarker_stat_min">Min</string>
     <string name="biomarker_stat_max">Max</string>
     <string name="biomarker_stat_avg">Average</string>
@@ -543,6 +543,8 @@
     <string name="theme_teal">Classic teal</string>
     <string name="theme_teal_hint">The original calm clinical teal</string>
     <string name="theme_material_you">Material You</string>
+    <string name="app_mode_title">App mode</string>
+    <string name="theme_material_you_hint">Follow your wallpaper\'s colors (Android 12+)</string>
     <string name="settings_language_title">Language</string>
     <string name="language_system">System default</string>
     <string name="language_english">English</string>

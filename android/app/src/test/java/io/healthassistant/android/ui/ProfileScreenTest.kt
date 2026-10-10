@@ -162,11 +162,11 @@ class ProfileScreenTest {
     fun mode_row_opens_a_dropdown_with_both_options() {
         screen()
 
-        composeRule.onNodeWithText("How do you want to use the app?").performScrollTo().assertIsDisplayed()
-        composeRule.onNodeWithText("How do you want to use the app?").performScrollTo().performClick()
-        composeRule.onNodeWithText("Your daily readings, records and connection — big, calm screens.").assertIsDisplayed()
+        composeRule.onNodeWithText("App mode").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("App mode").performScrollTo().performClick()
+        composeRule.onNodeWithText("Just the essentials — large print.").assertIsDisplayed()
         composeRule
-            .onNodeWithText("Everything, including the doctors directory, server notifications and dashboard editing.")
+            .onNodeWithText("All features, unlocked.")
             .assertIsDisplayed()
     }
 
@@ -193,7 +193,7 @@ class ProfileScreenTest {
             )
         }
 
-        composeRule.onNodeWithText("How do you want to use the app?").performScrollTo().performClick()
+        composeRule.onNodeWithText("App mode").performScrollTo().performClick()
         composeRule.onNodeWithText("Advanced (all features)").performClick()
 
         assertEquals(UiMode.ADVANCED, picked)
@@ -249,7 +249,7 @@ class ProfileScreenTest {
             )
         }
 
-        composeRule.onNodeWithText("How do you want to use the app?").performScrollTo().performClick()
-        composeRule.onNodeWithText("Your daily readings, records and connection — big, calm screens.").assertIsDisplayed()
+        composeRule.onNodeWithText("App mode").performScrollTo().performClick()
+        composeRule.onNodeWithText("Just the essentials — large print.").assertIsDisplayed()
     }
 }

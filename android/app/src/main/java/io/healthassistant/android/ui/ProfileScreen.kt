@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -52,6 +53,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.healthassistant.android.R
 import io.healthassistant.android.settings.UiMode
@@ -266,7 +268,7 @@ private fun ModeRowWithMenu(
     Box {
         SettingsRow(
             icon = Icons.Outlined.Tune,
-            title = stringResource(R.string.mode_title),
+            title = stringResource(R.string.app_mode_title),
             subtitle =
                 stringResource(
                     if (mode == UiMode.SIMPLE) R.string.mode_simple else R.string.mode_advanced,
@@ -275,32 +277,36 @@ private fun ModeRowWithMenu(
             showDivider = false,
         )
         DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
-            UiMode.entries.forEach { option ->
-                DropdownMenuItem(
-                    text = {
-                        Column {
-                            Text(stringResource(if (option == UiMode.SIMPLE) R.string.mode_simple else R.string.mode_advanced))
-                            Text(
-                                stringResource(if (option == UiMode.SIMPLE) R.string.mode_simple_hint else R.string.mode_advanced_hint),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    },
-                    trailingIcon = {
-                        if (option == mode) {
-                            Icon(Icons.Outlined.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                        }
-                    },
-                    onClick = {
-                        menuOpen = false
-                        onSelect(option)
-                    },
-                )
-            }
+            ModeMenuOption(
+                label = stringResource(R.string.mode_simple),
+                hint = stringResource(R.string.mode_simple_hint),
+                selected = mode == UiMode.SIMPLE,
+                onClick = {
+                    menuOpen = false
+                    onSelect(UiMode.SIMPLE)
+                },
+            )
+            HorizontalDivider(Modifier.padding(horizontal = 12.dp), color = MaterialTheme.colorScheme.outlineVariant)
+            ModeMenuOption(
+                label = stringResource(R.string.mode_advanced),
+                hint = stringResource(R.string.mode_advanced_hint),
+                selected = mode == UiMode.ADVANCED,
+                onClick = {
+                    menuOpen = false
+                    onSelect(UiMode.ADVANCED)
+                },
+            )
         }
     }
 }
+
+@Composable
+private fun currentThemeLabel(theme: UiTheme): String =
+    when (theme) {
+        UiTheme.AURORA -> stringResource(R.string.theme_aurora)
+        UiTheme.TEAL -> stringResource(R.string.theme_teal)
+        UiTheme.MATERIAL_YOU -> stringResource(R.string.theme_material_you)
+    }
 
 /** Profile's Appearance pick, compact: one row showing the current theme;
  *  tapping opens a dropdown with the three presets (swatch + name + check). */
@@ -320,32 +326,38 @@ private fun ThemeRowWithMenu(
             showDivider = showDivider,
         )
         DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
-            UiTheme.entries.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(currentThemeLabel(option)) },
-                    leadingIcon = { ThemeSwatch(option) },
-                    trailingIcon = {
-                        if (option == theme) {
-                            Icon(Icons.Outlined.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                        }
-                    },
-                    onClick = {
-                        menuOpen = false
-                        onSelect(option)
-                    },
-                )
-            }
+            ThemeMenuOption(
+                label = currentThemeLabel(UiTheme.AURORA),
+                swatch = SwatchColors(AuroraLightColors.primary, AuroraLightColors.primaryContainer, AuroraDarkColors.primary),
+                selected = theme == UiTheme.AURORA,
+                onClick = {
+                    menuOpen = false
+                    onSelect(UiTheme.AURORA)
+                },
+            )
+            HorizontalDivider(Modifier.padding(horizontal = 12.dp), color = MaterialTheme.colorScheme.outlineVariant)
+            ThemeMenuOption(
+                label = currentThemeLabel(UiTheme.TEAL),
+                swatch = SwatchColors(HALightColors.primary, HALightColors.primaryContainer, HADarkColors.primary),
+                selected = theme == UiTheme.TEAL,
+                onClick = {
+                    menuOpen = false
+                    onSelect(UiTheme.TEAL)
+                },
+            )
+            HorizontalDivider(Modifier.padding(horizontal = 12.dp), color = MaterialTheme.colorScheme.outlineVariant)
+            ThemeMenuOption(
+                label = currentThemeLabel(UiTheme.MATERIAL_YOU),
+                swatch = SwatchColors(Color(0xFF5B69E0), Color(0xFFD8DEFF), Color(0xFFBEC2FF)),
+                selected = theme == UiTheme.MATERIAL_YOU,
+                onClick = {
+                    menuOpen = false
+                    onSelect(UiTheme.MATERIAL_YOU)
+                },
+            )
         }
     }
 }
-
-@Composable
-private fun currentThemeLabel(theme: UiTheme): String =
-    when (theme) {
-        UiTheme.AURORA -> stringResource(R.string.theme_aurora)
-        UiTheme.TEAL -> stringResource(R.string.theme_teal)
-        UiTheme.MATERIAL_YOU -> stringResource(R.string.theme_material_you)
-    }
 
 /** Profile's Language pick (Android 13+): one row showing the current
  *  language; tapping opens a dropdown (System default / English / Ελληνικά).
@@ -371,7 +383,7 @@ private fun LanguageRowWithMenu() {
             showDivider = false,
         )
         DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
-            LanguageMenuItem(
+            ModeMenuOption(
                 label = stringResource(R.string.language_system),
                 selected = currentTag.isEmpty(),
                 onClick = {
@@ -379,7 +391,7 @@ private fun LanguageRowWithMenu() {
                     setAppLocale(context, "")
                 },
             )
-            LanguageMenuItem(
+            ModeMenuOption(
                 label = stringResource(R.string.language_english),
                 selected = currentTag == "en",
                 onClick = {
@@ -387,7 +399,7 @@ private fun LanguageRowWithMenu() {
                     setAppLocale(context, "en")
                 },
             )
-            LanguageMenuItem(
+            ModeMenuOption(
                 label = stringResource(R.string.language_greek),
                 selected = currentTag == "el",
                 onClick = {
@@ -397,23 +409,6 @@ private fun LanguageRowWithMenu() {
             )
         }
     }
-}
-
-@Composable
-private fun LanguageMenuItem(
-    label: String,
-    selected: Boolean,
-    onClick: () -> Unit,
-) {
-    DropdownMenuItem(
-        text = { Text(label) },
-        trailingIcon = {
-            if (selected) {
-                Icon(Icons.Outlined.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-            }
-        },
-        onClick = onClick,
-    )
 }
 
 private fun currentAppLocaleTag(context: android.content.Context): String =
@@ -452,18 +447,78 @@ private fun setAppLocale(
     }
 }
 
+/** A dropdown option with a bold label, one-line hint, and a trailing check
+ *  on the selected one — reads as a choice, not a paragraph. */
 @Composable
-private fun ThemeSwatch(theme: UiTheme) {
-    val colors =
-        when (theme) {
-            UiTheme.AURORA -> Triple(AuroraLightColors.primary, AuroraLightColors.primaryContainer, AuroraDarkColors.primary)
-            UiTheme.TEAL -> Triple(HALightColors.primary, HALightColors.primaryContainer, HADarkColors.primary)
-            UiTheme.MATERIAL_YOU -> Triple(Color(0xFF5B69E0), Color(0xFFD8DEFF), Color(0xFFBEC2FF))
-        }
+private fun ModeMenuOption(
+    label: String,
+    hint: String? = null,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    DropdownMenuItem(
+        modifier = Modifier.heightIn(min = 64.dp),
+        text = {
+            Column(Modifier.padding(vertical = 4.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(label, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
+                hint?.let {
+                    Text(
+                        it,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        },
+        trailingIcon = {
+            if (selected) {
+                Icon(Icons.Outlined.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            }
+        },
+        onClick = onClick,
+    )
+}
+
+@Composable
+private fun ThemeMenuOption(
+    label: String,
+    swatch: SwatchColors,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    DropdownMenuItem(
+        modifier = Modifier.heightIn(min = 56.dp),
+        text = {
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                ThemeSwatch(swatch)
+                Text(label, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
+            }
+        },
+        trailingIcon = {
+            if (selected) {
+                Icon(Icons.Outlined.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            }
+        },
+        onClick = onClick,
+    )
+}
+
+private data class SwatchColors(
+    val primary: Color,
+    val container: Color,
+    val dark: Color,
+)
+
+@Composable
+private fun ThemeSwatch(swatch: SwatchColors) {
     Canvas(Modifier.size(width = 34.dp, height = 20.dp)) {
-        drawCircle(colors.third, radius = 9.dp.toPx(), center = center.copy(x = 9.dp.toPx()))
-        drawCircle(colors.first, radius = 9.dp.toPx(), center = center.copy(x = 17.dp.toPx()))
-        drawCircle(colors.second, radius = 5.dp.toPx(), center = center.copy(x = 17.dp.toPx()))
+        drawCircle(swatch.dark, radius = 9.dp.toPx(), center = center.copy(x = 9.dp.toPx()))
+        drawCircle(swatch.primary, radius = 9.dp.toPx(), center = center.copy(x = 17.dp.toPx()))
+        drawCircle(swatch.container, radius = 5.dp.toPx(), center = center.copy(x = 17.dp.toPx()))
     }
 }
 

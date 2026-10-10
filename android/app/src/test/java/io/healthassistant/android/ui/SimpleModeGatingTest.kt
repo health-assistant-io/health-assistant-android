@@ -78,7 +78,7 @@ class SimpleModeGatingTest {
         }
 
         composeRule.onNodeWithText("Server: https://health.example").assertIsDisplayed()
-        composeRule.onNodeWithText("How do you want to use the app?").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("App mode").performScrollTo().assertIsDisplayed()
         composeRule.onNodeWithText("Privacy & data").performScrollTo().assertIsDisplayed()
         composeRule.onNodeWithText("About").performScrollTo().assertIsDisplayed()
 

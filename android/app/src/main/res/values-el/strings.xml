@@ -393,10 +393,11 @@
     <string name="med_reminder_mark_taken">Σημείωση ως ληφθέν</string>
     <!-- App mode (Simple / Advanced, K-simple-mode) -->
     <string name="mode_title">Πώς θέλετε να χρησιμοποιείτε την εφαρμογή;</string>
+    <string name="app_mode_title">Λειτουργία εφαρμογής</string>
     <string name="mode_simple">Απλή (μόνο τα απαραίτητα)</string>
-    <string name="mode_simple_hint">Οι καθημερινές μετρήσεις, ο φάκελος και η σύνδεση — μεγάλες, ήρεμες οθόνες.</string>
+    <string name="mode_simple_hint">Μόνο τα απαραίτητα — με μεγάλη γραφή.</string>
     <string name="mode_advanced">Για προχωρημένους (όλες οι λειτουργίες)</string>
-    <string name="mode_advanced_hint">Όλα, συμπεριλαμβανομένου του καταλόγου γιατρών, των ειδοποιήσεων διακομιστή και της επεξεργασίας ταμπλό.</string>
+    <string name="mode_advanced_hint">Όλες οι λειτουργίες, ξεκλείδωτες.</string>
     <string name="biomarker_stat_min">Ελάχ.</string>
     <string name="biomarker_stat_max">Μέγ.</string>
     <string name="biomarker_stat_avg">Μέσος όρος</string>
@@ -507,8 +508,8 @@
     <string name="theme_teal">Κλασικό teal</string>
     <string name="theme_teal_hint">Το αρχικό ήρεμο κλινικό teal</string>
     <string name="theme_material_you">Material You</string>
-    <string name="settings_language_title">Γλώσσα</string>
-    <string name="language_system">Προεπιλογή συστήματος</string>
+    <string name="theme_material_you_hint">Ακολουθεί τα χρώματα της ταπετσαρίας σας (Android 12+)</string>
+    <string name="settings_language_title">Γλώσσα</string>    <string name="language_system">Προεπιλογή συστήματος</string>
     <string name="language_english">English</string>
     <string name="language_greek">Ελληνικά</string>
 </resources>
