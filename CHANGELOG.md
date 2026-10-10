@@ -8,6 +8,7 @@ tagged `vX.Y.Z` via `scripts/version_manager.py`.
 
 ### Added
 
+- **In-app language picker (Profile › Language)** — System default / English / Ελληνικά, applied instantly (platform `LocaleManager` on Android 13+, `AppCompatDelegate` below). `MainActivity` is now `AppCompatActivity` with `launchMode="singleTop"` — which also fixes widget taps on an already-open app silently dropping their navigation.
 - **Full Greek translation** — the app is now fully localized: 435 strings translated, with the remaining entries intentionally English (brand names, URLs, format examples). Health Assistant also supports **per-app languages** (Android 13+): set its language independently of the phone in Settings → Apps → Health Assistant → Language, and adding a new locale is a documented, gate-enforced process (`docs/dev` + android/AGENTS.md).
 
 ### Added

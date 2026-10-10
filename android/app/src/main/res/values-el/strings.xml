@@ -507,5 +507,8 @@
     <string name="theme_teal">Κλασικό teal</string>
     <string name="theme_teal_hint">Το αρχικό ήρεμο κλινικό teal</string>
     <string name="theme_material_you">Material You</string>
-    <string name="theme_material_you_hint">Ακολουθεί τα χρώματα της ταπετσαρίας σας (Android 12+)</string>
+    <string name="settings_language_title">Γλώσσα</string>
+    <string name="language_system">Προεπιλογή συστήματος</string>
+    <string name="language_english">English</string>
+    <string name="language_greek">Ελληνικά</string>
 </resources>

@@ -4,11 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -25,9 +25,9 @@ import io.healthassistant.shared.onboarding.Onboarding
 import org.koin.compose.koinInject
 
 /**
- * Phase B.4 — extends [FragmentActivity] (was ComponentActivity) so
+ * Phase B.4 — extends [AppCompatActivity] (was ComponentActivity) so
  * androidx.biometric.BiometricPrompt can attach its headless fragment for
- * the system biometric UI. FragmentActivity is a strict superset of
+ * the system biometric UI. AppCompatActivity is a strict superset of
  * ComponentActivity, so the existing Compose + activity-result contracts
  * still bind cleanly.
  *
@@ -35,7 +35,7 @@ import org.koin.compose.koinInject
  * [AppLockManager.onBackgrounded] / [onForeground] hooks — that's how the
  * 60s grace window is enforced app-wide (not per-activity).
  */
-class MainActivity : FragmentActivity() {
+class MainActivity : AppCompatActivity() {
     /** M4 (widgets) — the route a widget tap asked to open, observed by
      *  [AppRoot]'s navigation. Compose-state (not a field read once) so a tap
      *  on an already-open app re-fires through [onNewIntent]. */

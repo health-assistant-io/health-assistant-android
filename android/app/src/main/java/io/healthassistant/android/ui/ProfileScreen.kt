@@ -1,5 +1,6 @@
 package io.healthassistant.android.ui
 
+import android.os.Build
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -49,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.healthassistant.android.R
@@ -116,7 +118,9 @@ fun ProfileScreen(
         SettingsSection {
             ModeRowWithMenu(mode = mode, onSelect = onSetMode)
             HorizontalDivider(Modifier.padding(start = 40.dp), color = MaterialTheme.colorScheme.outlineVariant)
-            ThemeRowWithMenu(theme = theme, onSelect = onSetTheme, showDivider = false)
+            ThemeRowWithMenu(theme = theme, onSelect = onSetTheme)
+            HorizontalDivider(Modifier.padding(start = 40.dp), color = MaterialTheme.colorScheme.outlineVariant)
+            LanguageRowWithMenu()
         }
         onOpenWebApp?.let {
             Spacer(Modifier.height(16.dp))
@@ -342,6 +346,111 @@ private fun currentThemeLabel(theme: UiTheme): String =
         UiTheme.TEAL -> stringResource(R.string.theme_teal)
         UiTheme.MATERIAL_YOU -> stringResource(R.string.theme_material_you)
     }
+
+/** Profile's Language pick (Android 13+): one row showing the current
+ *  language; tapping opens a dropdown (System default / English / Ελληνικά).
+ *  Uses the platform LocaleManager — the choice persists system-side and
+ *  syncs with the per-app language setting. Hidden below Android 13, where
+ *  the system language governs. */
+@Composable
+private fun LanguageRowWithMenu() {
+    val context = LocalContext.current
+    val currentTag = currentAppLocaleTag(context)
+    var menuOpen by remember { mutableStateOf(false) }
+    Box {
+        SettingsRow(
+            icon = Icons.Outlined.Language,
+            title = stringResource(R.string.settings_language_title),
+            subtitle =
+                when (currentTag) {
+                    "el" -> stringResource(R.string.language_greek)
+                    "en" -> stringResource(R.string.language_english)
+                    else -> stringResource(R.string.language_system)
+                },
+            onClick = { menuOpen = true },
+            showDivider = false,
+        )
+        DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+            LanguageMenuItem(
+                label = stringResource(R.string.language_system),
+                selected = currentTag.isEmpty(),
+                onClick = {
+                    menuOpen = false
+                    setAppLocale(context, "")
+                },
+            )
+            LanguageMenuItem(
+                label = stringResource(R.string.language_english),
+                selected = currentTag == "en",
+                onClick = {
+                    menuOpen = false
+                    setAppLocale(context, "en")
+                },
+            )
+            LanguageMenuItem(
+                label = stringResource(R.string.language_greek),
+                selected = currentTag == "el",
+                onClick = {
+                    menuOpen = false
+                    setAppLocale(context, "el")
+                },
+            )
+        }
+    }
+}
+
+@Composable
+private fun LanguageMenuItem(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = { Text(label) },
+        trailingIcon = {
+            if (selected) {
+                Icon(Icons.Outlined.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            }
+        },
+        onClick = onClick,
+    )
+}
+
+private fun currentAppLocaleTag(context: android.content.Context): String =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        context
+            .getSystemService(android.app.LocaleManager::class.java)
+            .applicationLocales
+            .toLanguageTags()
+    } else {
+        androidx.appcompat.app.AppCompatDelegate
+            .getApplicationLocales()
+            .toLanguageTags()
+    }
+
+private fun setAppLocale(
+    context: android.content.Context,
+    tag: String,
+) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        context.getSystemService(android.app.LocaleManager::class.java).applicationLocales =
+            if (tag.isEmpty()) {
+                android.os.LocaleList.getEmptyLocaleList()
+            } else {
+                android.os.LocaleList.forLanguageTags(tag)
+            }
+    } else {
+        androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(
+            if (tag.isEmpty()) {
+                androidx.core.os.LocaleListCompat
+                    .getEmptyLocaleList()
+            } else {
+                androidx.core.os.LocaleListCompat
+                    .forLanguageTags(tag)
+            },
+        )
+    }
+}
 
 @Composable
 private fun ThemeSwatch(theme: UiTheme) {
