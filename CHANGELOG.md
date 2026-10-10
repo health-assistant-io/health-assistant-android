@@ -8,7 +8,7 @@ tagged `vX.Y.Z` via `scripts/version_manager.py`.
 
 ### Added
 
-- **Full Greek translation** — every one of the app's 473 strings now ships in Greek (previously many surfaced as English placeholders). Health Assistant is also wired for **per-app languages** (Android 13+): set its language independently of the phone in Settings → Apps → Health Assistant → Language, and adding a new locale is a documented, gate-enforced process (`docs/dev` + android/AGENTS.md).
+- **Full Greek translation** — the app is now fully localized: 435 strings translated, with the remaining entries intentionally English (brand names, URLs, format examples). Health Assistant also supports **per-app languages** (Android 13+): set its language independently of the phone in Settings → Apps → Health Assistant → Language, and adding a new locale is a documented, gate-enforced process (`docs/dev` + android/AGENTS.md).
 
 ### Added
 

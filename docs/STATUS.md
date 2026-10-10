@@ -37,7 +37,7 @@ Kept in the root [CHANGELOG.md](../CHANGELOG.md) (Keep-a-Changelog format;
 
 | Item | Status | Notes |
 |---|---|---|
-| Greek translations for accumulated `values-el` placeholders | pending | English placeholders are lint-legal but untranslated |
+| Greek translations for accumulated `values-el` placeholders | ✅ landed 2026-10-10 — full el coverage (435 translated; brand names/URLs stay English by design), per-app language support, `GreekStringsTest` in the gate; new languages follow the documented process |
 | M3 leftovers (live HR tile on Home, today-vs-typical) | deferred | Superseded by the Home merge; revisit with user feedback |
 | M7 LTTB downsampling | deferred | Only if 1-year ranges feel slow (pinch-zoom windowing covers most cases) |
 | Remote, CI, signing + published APK artifacts | ✅ landed 2026-10-09 — public repo, `ci.yml`/`release.yml`/`gitleaks.yml`, release keystore (+ secrets), v1.2.0 published with a signed APK |
